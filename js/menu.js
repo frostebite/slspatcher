@@ -1,4 +1,5 @@
 var pathToDest, body='';
+const remote = require('remote')
 
 function getFolderSelection() {
   var dialog = remote.dialog
@@ -59,7 +60,7 @@ function syncFile(item, path){
 
   fs.stat(pathToDest+'/'+path+"/"+item.name, function(err, stats) {
 
-    if (stats["size"] != item.size) {
+    if (stats==null || stats["size"] != item.size) {
       console.log("syncing file "+item.name);
       var Client = require('ftp');
       var c = new Client();
@@ -94,6 +95,7 @@ function trimDeletedFiles(remoteList, path){
   //delete all files not included in the list object
   var fs = require('fs');
   fs.readdir(pathToDest+'/'+path, function(err, items) {
+    if(items == null) return;
     for (var i=0; i<items.length; i++) {
       for (var w=0; w<remoteList.length; w++) {
         if(remoteList[w].name === items[i]){
