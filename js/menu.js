@@ -1,5 +1,5 @@
 var pathToDest, body='';
-const remote = require('remote')
+const remote = require('electron').remote;
 
 function getFolderSelection() {
   var dialog = remote.dialog

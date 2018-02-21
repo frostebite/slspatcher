@@ -1,31 +1,36 @@
 {
-  "name": "electron-quick-start",
+  "name": "slspatcher",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "description": "A minimal Electron application for patching",
   "main": "main.js",
+  "author": "Fisher",
+  "build": {
+    "appId": "sls.patcher",
+    "win": {
+      "publish": [
+        "github",
+        "bintray"
+      ]
+    }
+  },
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atom/electron-quick-start.git"
+    "url": "git+https://github.com/frostebite/slspatcher.git"
   },
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial"
-  ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
-  "bugs": {
-    "url": "https://github.com/atom/electron-quick-start/issues"
-  },
-  "homepage": "https://github.com/atom/electron-quick-start#readme",
   "devDependencies": {
+    "electron": "^1.8.2",
+    "electron-builder": "^20.0.8",
     "electron-prebuilt": "^0.36.0"
   },
   "dependencies": {
+    "electron-packager": "^11.0.1",
+    "electron-updater": "^2.20.1",
     "ftp": "^0.3.10",
     "ftpsync": "^0.2.0",
     "linq": "^3.0.9",
