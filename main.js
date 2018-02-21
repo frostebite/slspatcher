@@ -1,6 +1,6 @@
 'use strict';
 const isDev = require('electron-is-dev');
-if(isDev){
+if(!isDev){
   const autoUpdater = require("electron-updater").autoUpdater;
   autoUpdater.checkForUpdatesAndNotify();
 }
