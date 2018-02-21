@@ -1,12 +1,19 @@
 'use strict';
 const isDev = require('electron-is-dev');
-if(!isDev){
-  const autoUpdater = require("electron-updater").autoUpdater;
-  autoUpdater.checkForUpdatesAndNotify();
-}
 const electron = require('electron');
 // Module to control application life.
 const app = electron.app;
+if(isDev){
+  console.log("patching");
+
+    app.on('ready', function()  {
+      const autoUpdater = require("electron-updater").autoUpdater;
+      autoUpdater.checkForUpdatesAndNotify();
+  });
+
+}else{
+  console.log("not patching");
+}
 app.commandLine.appendSwitch('js-flags', '--expose_gc');
 // Module to create native browser window.
 const BrowserWindow = electron.BrowserWindow;
