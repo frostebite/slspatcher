@@ -1,16 +1,17 @@
 {
   "name": "slspatcher",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A minimal Electron application for patching",
   "main": "main.js",
   "author": "Fisher",
   "build": {
     "appId": "sls.patcher",
     "win": {
-      "publish": [
-        "github",
-        "bintray"
-      ]
+      "publish": [{
+        "provider": "github",
+        "owner": "frostebite",
+        "repo": "slspatcher"
+    }]
     }
   },
   "scripts": {
@@ -29,6 +30,8 @@
     "electron-prebuilt": "^0.36.0"
   },
   "dependencies": {
+    "electron": "^1.8.2",
+    "electron-prebuilt": "^0.36.0",
     "electron-packager": "^11.0.1",
     "electron-updater": "^2.20.1",
     "ftp": "^0.3.10",
