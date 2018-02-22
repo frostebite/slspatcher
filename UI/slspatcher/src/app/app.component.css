@@ -1,0 +1,19 @@
+#base{
+    display: grid;
+    min-height: 100%;
+    grid-template-areas: "title" "content" "footer";
+    grid-template-columns: auto;
+    grid-template-rows: 1fr 5fr 1fr;
+}
+
+#header{
+    grid-area: title;
+}
+
+#content{
+    grid-area: content;
+}
+
+#footer{
+    grid-area: footer;
+}
