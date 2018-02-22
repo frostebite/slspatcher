@@ -1,6 +1,6 @@
 import { AppPage } from './app.po';
 
-describe('slspatcher App', () => {
+describe('slspatcherui App', () => {
   let page: AppPage;
 
   beforeEach(() => {

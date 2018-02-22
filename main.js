@@ -20,13 +20,13 @@ let mainWindow;
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1085, height: 450, 'accept-first-mouse': true,'title-bar-style': 'hidden', resizable:false});
+  mainWindow = new BrowserWindow({width: 1300, height: 500, 'accept-first-mouse': true,'title-bar-style': 'hidden', resizable:false});
 
   // and load the index.html of the app.
-  mainWindow.loadURL('file://' + __dirname + '/UI/slspatcher/dist/index.html');
+  mainWindow.loadURL('file://' + __dirname + '/slspatcherui/dist/index.html');
 
   // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
 
 
   // Emitted when the window is closed.
