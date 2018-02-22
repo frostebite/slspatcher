@@ -1,6 +1,6 @@
 {
   "name": "slspatcher",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "A minimal Electron application for patching",
   "main": "main.js",
   "author": "Fisher",
@@ -19,7 +19,12 @@
       ]
     }
   },
-  
+  "FileSet":[
+    {
+      "from": "./UI/slspatcher/dist/index.html",
+      "to": "./"
+    }
+  ],
   "scripts": {
     "start": "electron main.js",
     "pack": "electron-builder --dir",
