@@ -1,28 +1,29 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div id="base">
   <div id="header">
-    <div style="width: 25%;font-size: x-large;font-weight:  1000;color:white;">Stone Lion Studios</div>
-    <div style="color:white;font-size: large;">
-      <a href=""><span>Home</span></a>
-      <a href=""><span>Social</span></a>
-      <a href=""><span>Setting</span></a>
-      <a href=""><span>Developer</span></a>
+    <div style="font-size:50px;font-weight:  1000;color:white;float: left;margin-right:5px;">Stone Lion Studios</div>
+    <div style="color:white;font-size: x-large;float: left;margin-top: 2%;">
+      <a><span>Home</span></a>
+      <a><span>Social</span></a>
+      <a><span>Setting</span></a>
+      <a><span>Developer</span></a>
+    </div>
+    <div style="height:60px;margin-right:5px;mdisplay:block;float: right;padding: 0px;background-color: transparent;border: 0px;" onclick="openDestFolder()">
+      <img src="https://freeiconshop.com/wp-content/uploads/edd/folder-outline-filled.png" style="height: 100%;">
     </div>
   </div>
 
-  <div id="content" style="clear: both;width: 100%;height: 300px;">
-    <button mat-raised-button color="primary" style="height:60px;width:150px;margin:100px 0px;display:block;float: left;padding: 0px;background-color: transparent;border: 0px;" onclick="openDestFolder()">
-      <img src="https://freeiconshop.com/wp-content/uploads/edd/folder-outline-filled.png" style="height: 100%;">
-    </button>
-    <button mat-raised-button color="primary" style="width: 65%;height:60px;margin: 100px 50px;display:block;float: left;/* clear: both; */" onclick="startSync()">
-          Start Sync
-    </button>
-    <mat-card id="container" style="color: white;text-align:  center;padding: 20px;height: 20px;margin: 100px 0px;width:125px;display: block;float: left;">
-      Waiting...
-    </mat-card>
+  <div id="content" style="clear: both;width: 100%;height: 300px;position:relative;">
+    
+    <div id="version" style="color: white;text-align: left;position:absolute;bottom:0px;right:0px;">v0.1.5</div>
   </div>
 
   <div id="footer">
-      <div id="version" style="color: white;text-align: right;">v0.1.4</div>
+      <div id="container" style="color: white;text-align:center;float:left;height:80%;width:300px;padding-top:20px;">
+        Waiting...
+      </div>
+      <button mat-raised-button color="primary" style="float: right;height: 100%;width:200px" onclick="startSync()">
+          Sync All
+      </button>
   </div>
 </div>
