@@ -12,6 +12,8 @@ import { DeveloperComponent } from './Components/developer/developer.component';
 import { MissingComponent } from './Components/missing/missing.component';
 import { NgSlimScrollModule, SLIMSCROLL_DEFAULTS } from 'ngx-slimscroll';
 import {MatToolbarModule} from '@angular/material/toolbar';
+import {MatIconModule} from '@angular/material/icon';
+import {MatProgressBarModule} from '@angular/material/progress-bar';
 const appRoutes: Routes = [
   { path: 'developer', component: DeveloperComponent },
   { path: 'social',      component: SocialComponent },
@@ -36,7 +38,7 @@ const appRoutes: Routes = [
     MissingComponent
   ],
   imports: [
-    BrowserModule, MatCardModule, MatButtonModule, MatCheckboxModule, MatToolbarModule,
+    BrowserModule, MatCardModule, MatButtonModule, MatCheckboxModule, MatToolbarModule,MatIconModule,MatProgressBarModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only

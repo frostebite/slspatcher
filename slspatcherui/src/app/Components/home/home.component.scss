@@ -9,5 +9,43 @@
 .GameProperties{
     height:70px;
     
+    display: grid;
+    grid-template-areas: "icon bord contB" "icon bord contU";
+    grid-template-columns: 1fr 0.5fr 5fr;
+    grid-template-rows: 1fr 1fr;
 }
 
+.GamePropertiesFull{
+    height:70px;
+    
+    display: grid;
+    grid-template-areas: "top top top" "bot bot bot";
+    grid-template-columns: 1fr 0.5fr 5fr;
+    grid-template-rows: 1fr 1fr;
+}
+
+.GameIcon{
+    grid-area: icon;
+    width:100%;
+    height:100%;
+    position:relative;
+}
+
+.GamePropsMain{
+    grid-area: contB;
+}
+
+.GamePropsMainFull{
+    color:#ffd740;
+    grid-area: top;
+}
+
+.GamePropsOther{
+    grid-area: contU;
+    padding-top:10px;
+}
+
+.GamePropsOtherFull{
+    grid-area: bot;
+    padding-top:10px;
+}
