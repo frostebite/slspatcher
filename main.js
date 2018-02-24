@@ -20,7 +20,7 @@ let mainWindow;
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1182, height: 449, 'accept-first-mouse': true,'title-bar-style': 'hidden', resizable:false});
+  mainWindow = new BrowserWindow({width: 1182, height: 749, 'accept-first-mouse': true,'title-bar-style': 'hidden', resizable:false});
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/slspatcherui/dist/index.html');
