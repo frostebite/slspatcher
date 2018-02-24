@@ -31,12 +31,12 @@
 
   <div id="content"  slimScroll  style="clear: both;width: 100%;height: 600px;position:relative;">
       <router-outlet></router-outlet>
-    <div style="color: white;text-align: left;position:absolute;bottom:0px;right:0px;" id="versionDisplay">v0.1.7</div>
+    <div style="color: white;text-align: left;position:absolute;bottom:0px;right:0px;" id="versionDisplay">v0.1.9</div>
   </div>
 
   <div id="footer">
       <div id="container" style="color: white;text-align:center;float:left;height:80%;width:300px;padding-top:20px;">
-        Waiting...
+        {{status}}
       </div>
       <button mat-raised-button color="primary" style="float: right;height: 100%;width:200px" onclick="startSync()">
           Sync All

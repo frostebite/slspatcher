@@ -1,6 +1,7 @@
 var pathToDest, body='';
 const remote = require('electron').remote;
-
+let TotalFiles = 0;
+let FilesComplete = 0;
 function getFolderSelection() {
   var dialog = remote.dialog
   var selection = dialog.showOpenDialog({ properties: ['openDirectory']})
@@ -61,6 +62,8 @@ function syncFile(item, path){
   fs.stat(pathToDest+'/'+path+"/"+item.name, function(err, stats) {
 
     if (stats==null || stats["size"] != item.size) {
+      TotalFiles ++;
+      updateMessage();
       console.log("syncing file "+item.name);
       var Client = require('ftp');
       var c = new Client();
@@ -72,6 +75,8 @@ function syncFile(item, path){
             var shell = require('shelljs');
             shell.mkdir('-p', pathToDest+"/"+path+"/");
             stream.pipe(fs.createWriteStream(pathToDest+'/'+path+"/"+item.name));
+            FilesComplete++;
+            updateMessage();
           });
         });
       });
@@ -89,6 +94,16 @@ function syncFile(item, path){
   });
 
   
+}
+
+function updateMessage(){
+  let msg = "";
+  msg += FilesComplete + "/";
+  msg += TotalFiles + " files complete";
+  if(FilesComplete >= TotalFiles){
+    msg="Done";
+  }
+  window.dispatchEvent(new CustomEvent('syncing-all', {detail:{state:msg}}));
 }
 
 function trimDeletedFiles(remoteList, path){
@@ -134,7 +149,6 @@ function startSync() {
         trimDeletedFiles(list, "");
     
         c.end();
-        var authButton = document.getElementById('container').innerHTML = "done";
       }catch(err){
         syncDir("/");
       }
