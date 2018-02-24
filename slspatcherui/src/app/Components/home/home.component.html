@@ -4,20 +4,20 @@
     </mat-card>
     <div class="GameImage"></div>
     <mat-card class="GameProperties" style="padding:0px;" *ngIf="app.status == 'update'">
-      <div class="GameIcon"><mat-icon style="font-size:50px;
-        position: absolute;
-        bottom: 0px;
-        width: 80%;
-        height: 86%;
-        color: lightblue;">file_download</mat-icon></div>
+        <div class="GameIcon"><mat-icon style="font-size:50px;
+          position: absolute;
+          bottom: 0px;
+          width: 80%;
+          height: 86%;
+          color: lightblue;">file_download</mat-icon></div>
         <div class="GamePropsMain">
-          <div style="margin-top: 8px;font-size:20px;color: lightblue;">Update Available</div>
+          <button mat-button style="margin-top: 8px;font-size:20px;color: lightblue;width:100%;">Update</button>
         </div>
         <div class="GamePropsOther">
-            <span style="margin-top: 8px;font-size:15px;color: lightblue;">1.5GB</span>
-            <span style="margin-top: 8px;font-size:15px;">20GB</span>
-            <span style="margin-top: 8px;font-size:15px;">v0.0.1</span>
-            <mat-icon style="margin-top: 8px;font-size:15px;">folder</mat-icon>
+            <span style="font-size:15px;color: lightblue;">1.5GB</span>
+            <span style="font-size:15px;">20GB</span>
+            <span style="font-size:15px;">v0.0.1</span>
+            <mat-icon style="font-size:15px;">folder</mat-icon>
         </div>
     </mat-card>  
     <mat-card class="GamePropertiesFull" style="padding:0px;" *ngIf="app.status == 'ready'">
@@ -34,7 +34,7 @@
     <mat-card class="GamePropertiesFull" style="padding:0px;" *ngIf="app.status == 'downloading'">
         <div class="GamePropsMainFull">
             <mat-progress-bar mode="indeterminate" [color]="'accent'" style="margin-bottom:4px;"></mat-progress-bar>
-            Downloading...
+            <span style="margin:10px;">Downloading...</span>
         </div>
         <div class="GamePropsOtherFull">
             <span style="margin-top: 8px;font-size:15px;color: #ffd740;">0.5GB/1.5GB</span>
@@ -51,13 +51,12 @@
         height: 86%;
         color: lightblue;">file_download</mat-icon></div>
         <div class="GamePropsMain">
-          <div style="margin-top: 8px;font-size:20px;color: lightblue;">Install</div>
+          <button mat-button style="margin-top: 8px;font-size:20px;color: lightblue;width:100%;">Install</button>
         </div>
         <div class="GamePropsOther">
-            <span style="margin-top: 8px;font-size:15px;color: lightblue;">1.5GB</span>
-            <span style="margin-top: 8px;font-size:15px;">20GB</span>
-            <span style="margin-top: 8px;font-size:15px;">v0.0.1</span>
-            <mat-icon style="margin-top: 8px;font-size:15px;">folder</mat-icon>
+            <mat-icon style="font-size:15px;float:right;margin-right:6px;">folder</mat-icon>
+            <span style="font-size:15px;float:right;margin-right:6px;">v0.0.1</span>
+            <span style="font-size:15px;color: lightblue;float:right;margin-right:6px;">11.5GB</span>
         </div>
     </mat-card>    
 </div>

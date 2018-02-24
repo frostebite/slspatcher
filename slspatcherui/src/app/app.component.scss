@@ -3,7 +3,7 @@
     min-height: 100%;
     grid-template-areas: "title" "content" "footer";
     grid-template-columns: auto;
-    grid-template-rows: 1fr 5fr 1fr;
+    grid-template-rows: 1fr 10fr 1fr;
     font-family: Trebuchet MS,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Tahoma,sans-serif;
 }
 
@@ -19,4 +19,25 @@
 #footer{
     grid-area: footer;
     background-color: rgb(66, 66, 66);
+}
+
+.MenuOptionActive{
+}
+
+.MenuOptionActive:hover{
+    color:grey;
+    padding-bottom: 10px;
+    border-bottom: black 2px solid;
+    cursor: pointer;
+}
+
+.MenuOptionInnactive{
+    
+}
+
+.MenuOptionInnactive:hover{
+    color:grey;
+    padding-bottom: 10px;
+    border-bottom: black 2px solid;
+    cursor: pointer;
 }

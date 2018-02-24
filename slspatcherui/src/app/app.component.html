@@ -1,18 +1,37 @@
 <!--The content below is only a placeholder and can be replaced.-->
-<div id="base">
+<div *ngIf="!hasLoggedIn">
+  <mat-card style="width:200px;height:220px;margin:100px auto;">
+    <h3>Login</h3>
+    <form>
+      <mat-form-field style="width:100%;">
+        <input matInput placeholder="Username or email">
+      </mat-form-field>
+      <br style="clear:both;">
+      <mat-form-field style="width:100%;">
+        <input matInput placeholder="Password">
+      </mat-form-field>
+      <br style="clear:both;">
+      <br style="clear:both;">
+      <button mat-raised-button color="primary" style="width:45%;">Register</button><button mat-raised-button color="primary" (click)="hasLoggedIn = true;" style="width:45%;margin-left:5%;">Login</button>
+    </form>
+  </mat-card>
+</div>
+
+<div id="base" *ngIf="hasLoggedIn">
   <div id="header">
     <div style="font-size:50px;font-weight:  1000;color:white;float: left;margin-right:5px;font-family: Allerta; ">Stone Lion Studios</div>
     <div style="color:white;font-size: x-large;float: left;margin-top: 1.8%;">
-      <a routerLink="/home"     ><span>Home</span></a>
-      <a routerLink="/social"   ><span>Social</span></a>
-      <a routerLink="/settings" ><span>Setting</span></a>
-      <a routerLink="/developer"><span>Developer</span></a>
+      <span routerLink="/home"      class="MenuOptionActive">Home</span>
+      <span routerLink="/social"    class="MenuOptionInnactive">Social</span>
+      <span routerLink="/settings"  class="MenuOptionInnactive">Settings</span>
+      <span routerLink="/developer" class="MenuOptionInnactive">Developer</span>
     </div>
+    <button mat-raised-button color="warn"  (click)="hasLoggedIn = false;" style="float:right;height:100%;">Logout</button>
   </div>
 
   <div id="content"  slimScroll  style="clear: both;width: 100%;height: 600px;position:relative;">
       <router-outlet></router-outlet>
-    <div style="color: white;text-align: left;position:absolute;bottom:0px;right:0px;" id="versionDisplay">v0.1.6</div>
+    <div style="color: white;text-align: left;position:absolute;bottom:0px;right:0px;" id="versionDisplay">v0.1.7</div>
   </div>
 
   <div id="footer">
