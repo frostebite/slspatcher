@@ -3,32 +3,16 @@
   <div id="header">
     <div style="font-size:50px;font-weight:  1000;color:white;float: left;margin-right:5px;font-family: Allerta; ">Stone Lion Studios</div>
     <div style="color:white;font-size: x-large;float: left;margin-top: 1.8%;">
-      <a><span>Home</span></a>
-      <a><span>Social</span></a>
-      <a><span>Setting</span></a>
-      <a><span>Developer</span></a>
-    </div>
-    <div style="height:60px;margin-right:5px;mdisplay:block;float: right;padding: 0px;background-color: transparent;border: 0px;" onclick="openDestFolder()">
-      <img src="https://freeiconshop.com/wp-content/uploads/edd/folder-outline-filled.png" style="height: 100%;">
+      <a routerLink="/home"     ><span>Home</span></a>
+      <a routerLink="/social"   ><span>Social</span></a>
+      <a routerLink="/settings" ><span>Setting</span></a>
+      <a routerLink="/developer"><span>Developer</span></a>
     </div>
   </div>
 
-  <div id="content" style="clear: both;width: 100%;height: 300px;position:relative;">
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Turn of War       </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Turn of War - WW2 </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Poser 3D          </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Squad MOBA        </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">The Valley        </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Area of Operations</mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Fantasy MMO       </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Battle            </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Fury Road MMO     </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Western MMO       </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">SWAT/HVT          </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Paranormal        </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Space?            </mat-card>
-      <mat-card style="width:100px;height:80px;margin:10px 10px 5px 10px;float:left;">Top Down/OTS Base </mat-card>
-    <div id="version" style="color: white;text-align: left;position:absolute;bottom:0px;right:0px;">v0.1.5</div>
+  <div id="content"  slimScroll  style="clear: both;width: 100%;height: 300px;position:relative;">
+      <router-outlet></router-outlet>
+    <div style="color: white;text-align: left;position:absolute;bottom:0px;right:0px;" id="versionDisplay">v0.1.6</div>
   </div>
 
   <div id="footer">

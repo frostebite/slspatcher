@@ -1,12 +1,12 @@
 {
   "name": "slspatcher",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "A minimal Electron application for patching",
   "main": "main.js",
   "author": "Fisher",
   "build": {
     "appId": "sls.patcher",
-    "nsis":{
+    "nsis": {
       "artifactName": "${name}-setup-${version}.exe"
     },
     "win": {
@@ -19,7 +19,7 @@
       ]
     }
   },
-  "FileSet":[
+  "FileSet": [
     {
       "from": "./UI/slspatcher/dist/index.html",
       "to": "./"
