@@ -16,6 +16,8 @@ import {MatIconModule} from '@angular/material/icon';
 import {MatProgressBarModule} from '@angular/material/progress-bar';
 import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {MatDialogModule} from '@angular/material/dialog';
+import { PatchingModalComponent } from './Dialog/patching-modal/patching-modal.component';
 const appRoutes: Routes = [
   { path: 'developer', component: DeveloperComponent },
   { path: 'social',      component: SocialComponent },
@@ -37,10 +39,11 @@ const appRoutes: Routes = [
     SettingsComponent,
     LoginComponent,
     DeveloperComponent,
-    MissingComponent
+    MissingComponent,
+    PatchingModalComponent
   ],
   imports: [
-    BrowserModule, MatCardModule, MatButtonModule, MatCheckboxModule, MatToolbarModule,MatIconModule,MatProgressBarModule,MatInputModule,BrowserAnimationsModule,
+    BrowserModule, MatCardModule, MatButtonModule, MatCheckboxModule, MatToolbarModule,MatIconModule,MatProgressBarModule,MatInputModule,BrowserAnimationsModule,MatDialogModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
@@ -53,8 +56,11 @@ const appRoutes: Routes = [
       useValue: {
         alwaysVisible : false
       }
-    },
+    }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents:[
+    PatchingModalComponent
+  ]
 })
 export class AppModule { }

@@ -52,6 +52,7 @@ if(!isDev){
     sendStatusToWindow('Checking for update...');
   })
   autoUpdater.on('update-available', (info) => {
+    window.dispatchEvent(new CustomEvent('app-patch'));
     sendStatusToWindow('Update available.');
   })
   autoUpdater.on('update-not-available', (info) => {
@@ -68,6 +69,7 @@ if(!isDev){
   })
   autoUpdater.on('update-downloaded', (info) => {
     sendStatusToWindow('Update downloaded');
+    app.quit();
   });
 }
 app.on('ready', function()  {
