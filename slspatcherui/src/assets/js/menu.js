@@ -1,5 +1,7 @@
 var pathToDest, body='';
 const remote = require('electron').remote;
+var AsyncLock = require('async-lock');
+var lock = new AsyncLock();
 let TotalFiles = 0;
 let FilesComplete = 0;
 function getFolderSelection() {
@@ -55,38 +57,63 @@ function syncDir(path){
   c.connect(config);
 }
 
-function syncFile(item, path){
+function syncFile(item, path, ignore = false){
 
   var fs = require('fs');
 
   fs.stat(pathToDest+'/'+path+"/"+item.name, function(err, stats) {
 
     if (stats==null || stats["size"] != item.size) {
-      TotalFiles ++;
-      updateMessage();
-      console.log("syncing file "+item.name);
-      var Client = require('ftp');
-      var c = new Client();
-      c.on('ready', function() {
-        c.cwd(path, function(){
-          c.get(item.name, function(err, stream) {
-            if (err || stream == null)  syncFile(item, path);
-            stream.once('close', function() { c.end(); });
-            var shell = require('shelljs');
-            shell.mkdir('-p', pathToDest+"/"+path+"/");
-            stream.pipe(fs.createWriteStream(pathToDest+'/'+path+"/"+item.name));
-            FilesComplete++;
+      
+      lock.acquire('GetFile', function(callback){
+        if(!ignore){
+          lock.acquire('TotalFilesLock', function(cb){
+            TotalFiles++;
             updateMessage();
+            cb();
+          }, function(err, ret){
+            if(err!=null)
+            console.log(err.message) // output: error
+          });
+        }
+        console.log("syncing file "+item.name);
+        var Client = require('ftp');
+        var c = new Client();
+        c.on('ready', function() {
+          c.cwd(path, function(){
+            c.get(item.name, function(err, stream) {
+              try{
+                stream.once('close', function() { c.end(); });
+                var shell = require('shelljs');
+                shell.mkdir('-p', pathToDest+"/"+path+"/");
+                stream.pipe(fs.createWriteStream(pathToDest+'/'+path+"/"+item.name));
+                callback();
+                lock.acquire('completeFilesLock', function(cb){
+                  FilesComplete++;
+                  updateMessage();
+                  cb();
+                }, function(err, ret){
+                  if(err!=null)
+                  console.log(err.message) // output: error
+                });
+              }catch(err){
+                callback();
+                syncFile(item, path, true);
+              }
+            });
           });
         });
+        var config = {
+          host:"arma.uk-sf.com",
+          user:"SLSREAD",
+          password:"password"
+        };
+        // connect to localhost:21 as anonymous 
+        c.connect(config);
+      }, function(err, ret){
+        if(err!=null)
+        console.log(err.message) // output: error
       });
-      var config = {
-        host:"arma.uk-sf.com",
-        user:"SLSREAD",
-        password:"password"
-      };
-      // connect to localhost:21 as anonymous 
-      c.connect(config);
     }
     else{
       console.log("skipping file "+item.name);
@@ -100,7 +127,7 @@ function updateMessage(){
   let msg = "";
   msg += FilesComplete + "/";
   msg += TotalFiles + " files complete";
-  if(FilesComplete >= TotalFiles){
+  if(FilesComplete == TotalFiles){
     msg="Done";
   }
   window.dispatchEvent(new CustomEvent('syncing-all', {detail:{state:msg}}));
