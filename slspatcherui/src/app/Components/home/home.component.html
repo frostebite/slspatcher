@@ -2,7 +2,11 @@
     <mat-card style="height:30px;padding:4px;">
       {{app.name}}
     </mat-card>
-    <div class="GameImage"></div>
+    <div class="GameImage">
+      <div class="GameImageGreyout">
+        {{app.description}}
+      </div>
+    </div>
     <mat-card class="GameProperties" style="padding:0px;" *ngIf="app.status == 'update'">
         <div class="GameIcon"><mat-icon style="font-size:50px;
           position: absolute;

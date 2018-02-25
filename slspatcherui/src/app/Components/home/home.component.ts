@@ -11,19 +11,19 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
   }
   apps:any[] = [
-    {name: "Turn of War"        , status:"ready"},
-    {name: "Turn of War - WW2 " , status:"update"},
-    {name: "Poser 3D"           , status:"downloading"},
-    {name: "Squad MOBA"         , status:"available"},
-    {name: "The Valley"         , status:"ready"},
-    {name: "Area of Operations" , status:"ready"},
-    {name: "Fantasy MMO"        , status:"ready"},
-    {name: "Battle"             , status:"ready"},
-    {name: "Fury Road MMO"      , status:"ready"},
-    {name: "Western MMO"        , status:"ready"},
-    {name: "SWAT/HVT"           , status:"ready"},
-    {name: "Paranormal"         , status:"ready"},
-    {name: "Space?"             , status:"ready"},
-    {name: "Top Down/OTS Base"  , status:"ready"},
+    {name: "Turn of War"        , description: "A game about ...", status:"ready"},
+    {name: "Turn of War - WW2 " , description: "A game about ...", status:"update"},
+    {name: "Poser 3D"           , description: "A game about ...", status:"downloading"},
+    {name: "Squad MOBA"         , description: "A game about ...", status:"available"},
+    {name: "The Valley"         , description: "A game about ...", status:"ready"},
+    {name: "Area of Operations" , description: "A game about ...", status:"ready"},
+    {name: "Fantasy MMO"        , description: "A game about ...", status:"ready"},
+    {name: "Battle"             , description: "A game about ...", status:"ready"},
+    {name: "Fury Road MMO"      , description: "A game about ...", status:"ready"},
+    {name: "Western MMO"        , description: "A game about ...", status:"ready"},
+    {name: "SWAT/HVT"           , description: "A game about ...", status:"ready"},
+    {name: "Paranormal"         , description: "A game about ...", status:"ready"},
+    {name: "Space?"             , description: "A game about ...", status:"ready"},
+    {name: "Top Down/OTS Base"  , description: "A game about ...", status:"ready"},
   ];
 }
