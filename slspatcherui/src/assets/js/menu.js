@@ -1,6 +1,9 @@
 var pathToDest, body='';
 const remote = require('electron').remote;
+const electron = require('electron');
 var AsyncLock = require('async-lock');
+const fs = require('fs');
+const path = require('path');
 var lock = new AsyncLock();
 let TotalFiles = 0;
 let FilesComplete = 0;
@@ -19,6 +22,8 @@ function getFolderSelection() {
 
 function openDestFolder() {
   pathToDest = getFolderSelection();
+  SaveConfig(pathToDest);
+  GetConfigDir();
 }
 
 
@@ -192,4 +197,51 @@ function startSync() {
 
 function read(html){
   console.log(html);
+}
+
+function GetState(directory){
+
+}
+
+function Install(directory){
+
+}
+
+function Update(directory){
+
+}
+
+function Launch(directory){
+
+}
+
+function Delete(directory){
+
+}
+
+function GetConfig(){
+
+}
+
+function SaveConfig(data){
+  fs.writeFileSync(this.GetConfigPath(), JSON.stringify({
+    path: data
+  }));
+}
+
+function GetConfigDir(){
+  console.log("checking "+this.GetConfigPath());
+  fs.exists(this.GetConfigPath(), (exists)=>{
+    if(exists){
+      var data = JSON.parse(fs.readFileSync(this.GetConfigPath()));
+      window.dispatchEvent(new CustomEvent('config-read', {detail:{state:data}}));
+      console.log(data);
+    }
+    console.log("no config file");
+  })
+}
+
+function GetConfigPath(){
+  const userDataPath = (electron.app || electron.remote.app).getPath('userData');
+  return path.join(userDataPath, 'config' + '.json');
 }
