@@ -52,7 +52,7 @@ if(!isDev){
     sendStatusToWindow('Checking for update...');
   })
   autoUpdater.on('update-available', (info) => {
-    window.dispatchEvent(new CustomEvent('app-patch'));
+    mainWindow.dispatchEvent(new CustomEvent('app-patch'));
     sendStatusToWindow('Update available.');
   })
   autoUpdater.on('update-not-available', (info) => {
