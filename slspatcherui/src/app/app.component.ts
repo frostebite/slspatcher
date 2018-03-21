@@ -12,10 +12,13 @@ export class AppComponent implements OnInit {
   constructor(public dialog: MatDialog){
   }
   ngOnInit(): void {
+      this.version = window.localStorage.getItem("version");
+
   }
   title = 'app';
   status = 'Waiting...';
   hasLoggedIn : boolean;
+  version = "0.0.0";
 
   @HostListener('window:syncing-all', ['$event', "$event.detail.state"]) 
   updateNodes(event, state) {

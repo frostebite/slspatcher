@@ -25,8 +25,12 @@ function createWindow () {
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/slspatcherui/dist/index.html');
 
+  
   // Open the DevTools.
   mainWindow.webContents.openDevTools();
+
+
+  mainWindow.webContents.executeJavaScript("window.localStorage.setItem('version', '"+app.getVersion()+"');console.log('storing version');")
 
 
   // Emitted when the window is closed.
