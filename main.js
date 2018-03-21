@@ -26,10 +26,6 @@ function createWindow () {
   mainWindow.loadURL('file://' + __dirname + '/slspatcherui/dist/index.html');
 
   
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
-
-
   mainWindow.webContents.executeJavaScript("window.localStorage.setItem('version', '"+app.getVersion()+"');console.log('storing version');")
 
 
@@ -56,7 +52,7 @@ if(!isDev){
     sendStatusToWindow('Checking for update...');
   })
   autoUpdater.on('update-available', (info) => {
-    mainWindow.dispatchEvent(new CustomEvent('app-patch'));
+    mainWindow.webContents.executeJavaScript("window.dispatchEvent(new CustomEvent('app-patch'));");
     sendStatusToWindow('Update available.');
   })
   autoUpdater.on('update-not-available', (info) => {
