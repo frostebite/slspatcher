@@ -1,4 +1,5 @@
 var pathToDest, body='';
+var child = require('child_process').execFile;
 const remote = require('electron').remote;
 const electron = require('electron');
 var AsyncLock = require('async-lock');
@@ -62,7 +63,7 @@ function syncDir(path){
   c.connect(config);
 }
 
-function syncFile(item, path, ignore = false){
+function syncFile(item, path, isRetry = false, checkOnly = false){
 
   var fs = require('fs');
 
@@ -71,10 +72,10 @@ function syncFile(item, path, ignore = false){
     if (stats==null || stats["size"] != item.size) {
       
       lock.acquire('GetFile', function(callback){
-        if(!ignore){
+        if(!isRetry){
           lock.acquire('TotalFilesLock', function(cb){
             TotalFiles++;
-            updateMessage();
+            updateMessage(project);
             cb();
           }, function(err, ret){
             if(err!=null)
@@ -95,7 +96,7 @@ function syncFile(item, path, ignore = false){
                 callback();
                 lock.acquire('completeFilesLock', function(cb){
                   FilesComplete++;
-                  updateMessage();
+                  updateMessage(project);
                   cb();
                 }, function(err, ret){
                   if(err!=null)
@@ -127,6 +128,47 @@ function syncFile(item, path, ignore = false){
 
   
 }
+function scanAll(path){
+  console.log("checking dir "+path);
+  var Client = require('ftp');
+   
+  var c = new Client();
+  c.on('ready', function() {
+    c.cwd(path, function(){
+      c.list(function(err, list) {
+        if (err) syncDir(path);
+        try{
+          list.forEach(function(item) {
+            if(item.type == "d"){
+              scanAll(path+"/"+item.name);
+            }
+            else{
+              lock.acquire('TotalFilesLock', function(cb){
+                totalGb += item.size;
+                updateMessage(project);
+                cb();
+              }, function(err, ret){
+                if(err!=null)
+                console.log(err.message) // output: error
+              });
+            }
+          });
+          trimDeletedFiles(list, path);
+          c.end();
+        }catch(err){
+          syncDir(path);
+        }
+      });
+    });
+  });
+  var config = {
+    host:"arma.uk-sf.com",
+    user:"SLSREAD",
+    password:"password"
+  };
+  // connect to localhost:21 as anonymous 
+  c.connect(config);
+}
 
 function updateMessage(){
   let msg = "";
@@ -135,7 +177,15 @@ function updateMessage(){
   if(FilesComplete == TotalFiles){
     msg="Done";
   }
-  window.dispatchEvent(new CustomEvent('syncing-all', {detail:{state:msg}}));
+  if(project){
+    if(msg=="Done"){
+      window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"ready", project:project}}));
+    }else{
+      window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"downloading", project:project}}));
+    }
+  }else{
+    window.dispatchEvent(new CustomEvent('syncing-all', {detail:{state:msg}}));
+  }
 }
 
 function trimDeletedFiles(remoteList, path){
@@ -199,21 +249,94 @@ function read(html){
   console.log(html);
 }
 
-function GetState(directory){
+var dirToScan;
+var dirScanned;
+function RecursiveSizeCalculate(path, callback){
+  ListJob((job, list)=>{
+    if(list!= null){
+      list.forEach(function(item) {
+        if(item.type == "d"){
+          dirToScan++;
+          RecursiveSizeCalculate(job.path+"/"+item.name);
+        }
+        else{
+          console.log(item.size);
+        }
+        dirScanned++;
+        if(dirScanned == dirToScan){
+          callback(dirScanned);
+        }
+      });
+    }
+  }, path);
+  
+}
+
+function GetDiff(directory, callback){
+  RecursiveSizeCalculate(directory, (size)=>{
+    console.log("directories in "+directory+" "+size);
+    callback();
+  });
+}
+
+function CheckLocalExists(directory, callback){
+  fs.exists(pathToDest+"/"+directory, (exists) => {
+    console.log(directory + " exists: "+exists);
+    callback(exists);
+  });
+}
+
+function CheckUpdate(directory, callback){
+  callback(false);
+}
+
+function CheckRemoteExists(directory, callback){
 
 }
 
-function Install(directory){
 
-}
+window.addEventListener("get-project-status", function (event){
+  console.log("checking project state");
+  CheckLocalExists(event.detail.directory, function(exists) {
+    if(exists){
+      CheckUpdate(event.detail.directory, function(update){
+        if(!update){
+          window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"ready", project:event.detail.project}}));
+        }else{
+          window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"update", project:event.detail.project}}));
+        }
+      });
+    }
+    else{
+      window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project}}));
+      GetDiff(event.detail.directory, ()=>{});
+    }
+  });
+});
+
+
+window.addEventListener("install-project", function (event){
+  project = event.detail.name;
+  syncDir(event.detail.directory);
+});
 
 function Update(directory){
 
 }
 
-function Launch(directory){
+window.addEventListener("launch-project", function (event){
+  var executablePath = pathToDest+'/'+event.detail.directory+"/"+event.detail.launch;
 
-}
+  child(executablePath, function(err, data) {
+      if(err){
+         console.error(err);
+         return;
+      }
+   
+      console.log(data.toString());
+  });
+  
+});
 
 function Delete(directory){
 

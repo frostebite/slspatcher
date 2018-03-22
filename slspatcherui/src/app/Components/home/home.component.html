@@ -26,7 +26,7 @@
     </mat-card>  
     <mat-card class="GamePropertiesFull" style="padding:0px;" *ngIf="app.status == 'ready'">
         <div class="GamePropsMainFull">
-          <button mat-raised-button color="accent" style="width:100%;">Launch</button>
+          <button mat-raised-button color="accent" style="width:100%;" (click)="Launch(app)">Launch</button>
         </div>
         <div class="GamePropsOtherFull">
             <span style="margin-top: 2px;font-size:15px;float:left;margin-left:4px;"><i>12Feb2018</i></span>
@@ -55,7 +55,7 @@
         height: 86%;
         color: lightblue;">file_download</mat-icon></div>
         <div class="GamePropsMain">
-          <button mat-button style="margin-top: 8px;font-size:20px;color: lightblue;width:100%;">Install</button>
+          <button mat-button style="margin-top: 8px;font-size:20px;color: lightblue;width:100%;" (click)="Install(app)">Install</button>
         </div>
         <div class="GamePropsOther">
             <mat-icon style="font-size:15px;float:right;margin-right:6px;">folder</mat-icon>
