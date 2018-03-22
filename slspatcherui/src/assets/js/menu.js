@@ -262,11 +262,13 @@ function RecursiveSizeCalculate(path, callback){
         else{
           console.log(item.size);
         }
-        dirScanned++;
-        if(dirScanned == dirToScan){
-          callback(dirScanned);
-        }
       });
+    }
+    
+    dirScanned++;
+    console.log(dirScanned + "/" +dirToScan);
+    if(dirScanned == dirToScan){
+      callback(dirScanned);
     }
   }, path);
   
