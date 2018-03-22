@@ -249,8 +249,8 @@ function read(html){
   console.log(html);
 }
 
-var dirToScan;
-var dirScanned;
+var dirToScan = 0;
+var dirScanned = 0;
 function RecursiveSizeCalculate(path, callback){
   ListJob((job, list)=>{
     if(list!= null){
