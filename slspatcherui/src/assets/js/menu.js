@@ -256,20 +256,35 @@ function RecursiveSizeCalculate(path, callback){
     if(list!= null){
       list.forEach(function(item) {
         if(item.type == "d"){
-          dirToScan++;
+          lock.acquire('ToScan', function(callback){
+            dirToScan++;
+            callback();
+          }, function(err, ret){
+          if(err!=null)
+            console.log(err.message) // output: error
+          });
+        }});
+          
+          lock.acquire('Scanned', function(callback){
+            dirScanned++;
+            console.log(dirScanned + "/" +dirToScan);
+            if(dirScanned == dirToScan){
+              callback(dirScanned);
+            }
+            callback();
+          }, function(err, ret){
+          if(err!=null)
+            console.log(err.message) // output: error
+          });
           RecursiveSizeCalculate(job.path+"/"+item.name);
         }
         else{
           console.log(item.size);
         }
-      });
-    }
+    });
     
-    dirScanned++;
-    console.log(dirScanned + "/" +dirToScan);
-    if(dirScanned == dirToScan){
-      callback(dirScanned);
-    }
+    
+    
   }, path);
   
 }
