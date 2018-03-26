@@ -8,7 +8,7 @@ const path = require('path');
 var lock = new AsyncLock();
 let TotalFiles = 0;
 let FilesComplete = 0;
-
+GetConfigDir();
 function getFolderSelection() {
   var dialog = remote.dialog
   var selection = dialog.showOpenDialog({ properties: ['openDirectory']})
@@ -93,6 +93,7 @@ function syncFile(item, path, isRetry = false, checkOnly = false){
                 stream.once('close', function() { c.end(); });
                 var shell = require('shelljs');
                 shell.mkdir('-p', pathToDest+"/"+path+"/");
+                console.log(pathToDest+'/'+path+"/"+item.name);
                 stream.pipe(fs.createWriteStream(pathToDest+'/'+path+"/"+item.name));
                 callback();
                 lock.acquire('completeFilesLock', function(cb){
@@ -253,7 +254,7 @@ function read(html){
 
 function GetDiff(directory, callback){
   lock.acquire('GetDiff', function(cb){
-    var calculator = new SizeCalculator(directory);
+    var calculator = new SizeCalculator(directory, pathToDest, require('fs'));
     calculator.mainCallback = callback;
     calculator.RecursiveSizeCalculate(directory);
     cb();
@@ -267,7 +268,13 @@ function CheckLocalExists(directory, callback){
 }
 
 function CheckUpdate(directory, callback){
-  callback(false);
+  
+  lock.acquire('GetDiff', function(cb){
+    var calculator = new SizeCalculator(directory, pathToDest, require('fs'));
+    calculator.mainCallback = callback;
+    calculator.RecursiveSizeCalculate(directory);
+    cb();
+  }, LockError);
 }
 
 function CheckRemoteExists(directory, callback){
@@ -278,11 +285,11 @@ function CheckRemoteExists(directory, callback){
 window.addEventListener("get-project-status", function (event){
   CheckLocalExists(event.detail.directory, function(exists) {
     if(exists){
-      CheckUpdate(event.detail.directory, function(update){
-        if(!update){
+      CheckUpdate(event.detail.directory, function(size){
+        if(!size.TotalSize>0){
           window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"ready", project:event.detail.project}}));
         }else{
-          window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"update", project:event.detail.project}}));
+          window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"update", project:event.detail.project, size:size.TotalSize}}));
         }
       });
     }
@@ -290,8 +297,8 @@ window.addEventListener("get-project-status", function (event){
       window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"calculating", project:event.detail.project}}));
       console.log("getting diff for"+event.detail.directory);
       GetDiff(event.detail.directory, (size)=>{
-        console.log("got result "+bytesToSize(size));
-        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project, size:bytesToSize(size)}}));
+        console.log("got result "+bytesToSize(size.TotalSize));
+        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project, size:bytesToSize(size.TotalSize)}}));
       });
     }
   });
