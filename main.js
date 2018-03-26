@@ -27,7 +27,7 @@ function createWindow () {
 
   if(process.argv.includes("-devtools"))
     mainWindow.webContents.openDevTools();
-    
+
   mainWindow.webContents.executeJavaScript("window.localStorage.setItem('version', '"+app.getVersion()+"');console.log('storing version');")
 
 
@@ -67,6 +67,7 @@ if(!isDev){
     let log_message = "Download speed: " + progressObj.bytesPerSecond;
     log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
     log_message = log_message + ' (' + progressObj.transferred + "/" + progressObj.total + ')';
+    mainWindow.webContents.executeJavaScript("window.dispatchEvent(new CustomEvent('app-patch-progress'), {detail:{progress:"+progressObj.percent+"}});");
     sendStatusToWindow(log_message);
   })
   autoUpdater.on('update-downloaded', (info) => {

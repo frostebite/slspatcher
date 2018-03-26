@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { MatDialogRef } from '@angular/material';
 
 @Component({
@@ -12,5 +12,9 @@ export class PatchingModalComponent implements OnInit {
 
   ngOnInit() {
   }
-
+  progress = 0; 
+  @HostListener('window:app-patch-progress', ['$event', "$event.detail.progress"])
+  openDialog(event, progress): void {
+    progress = progress;
+  }
 }
