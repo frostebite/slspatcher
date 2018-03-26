@@ -346,6 +346,7 @@ function GetConfigDir(){
   fs.exists(this.GetConfigPath(), (exists)=>{
     if(exists){
       var data = JSON.parse(fs.readFileSync(this.GetConfigPath()));
+      pathToDest = data.path;
       window.dispatchEvent(new CustomEvent('config-read', {detail:{state:data}}));
       console.log(data);
     }
