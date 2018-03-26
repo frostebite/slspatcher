@@ -36,6 +36,9 @@ export class HomeComponent implements OnInit {
     this.apps.forEach(element => {
       if(element.name == project){
         element.status = state;
+        if(state == 'available'){
+          element.size = event.detail.size;
+        }
       }
     });
   }

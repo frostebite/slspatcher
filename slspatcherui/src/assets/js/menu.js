@@ -253,12 +253,9 @@ function read(html){
 
 function GetDiff(directory, callback){
   lock.acquire('GetDiff', function(cb){
-    var calculator = new SizeCalculator();
-    calculator.RootDirectory = directory;
-    calculator.RecursiveSizeCalculate(directory, (size)=>{
-      console.log("directories in "+directory+" "+size);
-      callback(size);
-    });
+    var calculator = new SizeCalculator(directory);
+    calculator.mainCallback = callback;
+    calculator.RecursiveSizeCalculate(directory);
     cb();
   }, LockError);
 }
@@ -290,13 +287,22 @@ window.addEventListener("get-project-status", function (event){
       });
     }
     else{
-      window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project}}));
+      window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"calculating", project:event.detail.project}}));
       console.log("getting diff for"+event.detail.directory);
-      GetDiff(event.detail.directory, (size)=>{console.log("got result"+size);});
+      GetDiff(event.detail.directory, (size)=>{
+        console.log("got result "+bytesToSize(size));
+        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project, size:bytesToSize(size)}}));
+      });
     }
   });
 });
 
+function bytesToSize(bytes) {
+  var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  if (bytes == 0) return '0 Byte';
+  var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+  return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+};
 
 window.addEventListener("install-project", function (event){
   project = event.detail.name;

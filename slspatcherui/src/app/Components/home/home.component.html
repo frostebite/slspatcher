@@ -47,6 +47,12 @@
             <mat-icon style="margin-top: 8px;font-size:15px;">folder</mat-icon>
         </div>
     </mat-card>   
+    <mat-card class="GamePropertiesFull" style="padding:0px;" *ngIf="app.status == 'calculating'">
+        <div class="GamePropsMainFull">
+            <mat-progress-bar mode="indeterminate" [color]="'accent'" style="margin-bottom:4px;"></mat-progress-bar>
+            <span style="margin:10px;">Calculating...</span>
+        </div>
+    </mat-card>   
     <mat-card class="GameProperties" style="padding:0px;" *ngIf="app.status == 'available'">
       <div class="GameIcon"><mat-icon style="font-size:50px;
         position: absolute;
@@ -60,7 +66,7 @@
         <div class="GamePropsOther">
             <mat-icon style="font-size:15px;float:right;margin-right:6px;">folder</mat-icon>
             <span style="font-size:15px;float:right;margin-right:6px;">v0.0.1</span>
-            <span style="font-size:15px;color: lightblue;float:right;margin-right:6px;">11.5GB</span>
+            <span style="font-size:15px;color: lightblue;float:right;margin-right:6px;">{{app.size}}</span>
         </div>
     </mat-card>    
 </div>
