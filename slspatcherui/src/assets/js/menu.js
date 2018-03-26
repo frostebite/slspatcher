@@ -8,6 +8,7 @@ const path = require('path');
 var lock = new AsyncLock();
 let TotalFiles = 0;
 let FilesComplete = 0;
+
 function getFolderSelection() {
   var dialog = remote.dialog
   var selection = dialog.showOpenDialog({ properties: ['openDirectory']})
@@ -249,56 +250,21 @@ function read(html){
   console.log(html);
 }
 
-var dirToScan = 0;
-var dirScanned = 0;
-function RecursiveSizeCalculate(path, callback){
-  ListJob((job, list)=>{
-    if(list!= null){
-      list.forEach(function(item) {
-        if(item.type == "d"){
-          lock.acquire('ToScan', function(callback){
-            dirToScan++;
-            callback();
-          }, function(err, ret){
-          if(err!=null)
-            console.log(err.message) // output: error
-          });
-        }});
-          
-          lock.acquire('Scanned', function(callback){
-            dirScanned++;
-            console.log(dirScanned + "/" +dirToScan);
-            if(dirScanned == dirToScan){
-              callback(dirScanned);
-            }
-            callback();
-          }, function(err, ret){
-          if(err!=null)
-            console.log(err.message) // output: error
-          });
-          RecursiveSizeCalculate(job.path+"/"+item.name);
-        }
-        else{
-          console.log(item.size);
-        }
-    });
-    
-    
-    
-  }, path);
-  
-}
 
 function GetDiff(directory, callback){
-  RecursiveSizeCalculate(directory, (size)=>{
-    console.log("directories in "+directory+" "+size);
-    callback();
-  });
+  lock.acquire('GetDiff', function(cb){
+    var calculator = new SizeCalculator();
+    calculator.RootDirectory = directory;
+    calculator.RecursiveSizeCalculate(directory, (size)=>{
+      console.log("directories in "+directory+" "+size);
+      callback(size);
+    });
+    cb();
+  }, LockError);
 }
 
 function CheckLocalExists(directory, callback){
   fs.exists(pathToDest+"/"+directory, (exists) => {
-    console.log(directory + " exists: "+exists);
     callback(exists);
   });
 }
@@ -313,7 +279,6 @@ function CheckRemoteExists(directory, callback){
 
 
 window.addEventListener("get-project-status", function (event){
-  console.log("checking project state");
   CheckLocalExists(event.detail.directory, function(exists) {
     if(exists){
       CheckUpdate(event.detail.directory, function(update){
@@ -326,7 +291,8 @@ window.addEventListener("get-project-status", function (event){
     }
     else{
       window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project}}));
-      GetDiff(event.detail.directory, ()=>{});
+      console.log("getting diff for"+event.detail.directory);
+      GetDiff(event.detail.directory, (size)=>{console.log("got result"+size);});
     }
   });
 });

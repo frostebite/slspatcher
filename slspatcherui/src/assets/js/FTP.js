@@ -10,32 +10,64 @@ var config = {
 var jobs = new Array();
 
 function ListJob(callback, path){
-    this.jobs.push({type:"list",callback:callback, path:path});
-    JobsIgnition();
+    lock.acquire('FTPJobs', (cb)=>{
+        this.jobs.push(new FTPJob("list", callback, path));
+        JobsIgnition();
+        cb();
+    }, LockError);
 }
 
-function GetJob(callback, path){
+/*function GetJob(callback, path){
     this.jobs.push({type:"get",callback:callback, path:path});
     JobsIgnition();
-}
+}*/
 
 function JobsIgnition(){
     if(this.client == null){
         this.client = new FTPClient();
-        this.client.on('ready', function() {JobCycle();});
+        this.client.on('ready', () => {JobCycle();});
         this.client.connect(config);
     }
 }
 
 function JobCycle(){
-    while(jobs.length>0){
+    if(jobs.length!=0){
         job = jobs.pop();
-        this.client.cwd(job.path, function(){
-            if(job.type == "list"){
-                this.client.list(function(err, list) {job.callback(job, list)});
+        job.Process(this.client);
+        JobCycle();
+    }
+    else{
+        this.client = null;
+    }
+}
+
+class FTPJob{
+    constructor(type, callback, path){
+        this.type = type;
+        this.callback = callback;
+        this.path = path;
+    }
+    Process(client) {
+        client.cwd(this.path, (err, currentDir)=>{
+            if(!err){
+                console.log(this);
+                console.log(currentDir);
+                if(this.type == "list"){
+                    client.list((err, list) => {
+                        if(err!=null){
+                            return;
+                        }
+                        console.log(list);
+                        console.log(this.path);
+                        this.callback(this, list)
+                    });
+                }
+                else if(job.type == "get"){
+                    client.get(item.name, (err, stream) => {this.callback(job, stream)});
+                }
             }
-            else if(job.type == "get"){
-                this.client.get(item.name, function(err, stream) {job.callback(job, stream)});
+            else{
+                this.callback(this, null);
             }
         });
     }
