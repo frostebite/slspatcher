@@ -18,8 +18,8 @@
           <button mat-button style="margin-top: 8px;font-size:20px;color: lightblue;width:100%;" (click)="Install(app)">Update</button>
         </div>
         <div class="GamePropsOther">
-            <span style="font-size:15px;color: lightblue;">1.5GB</span>
-            <span style="font-size:15px;">20GB</span>
+            <span style="font-size:15px;color: lightblue;">{{app.UpdateSize}}</span>
+            <span style="font-size:15px;">{{app.size}}</span>
             <span style="font-size:15px;">v0.0.1</span>
             <mat-icon style="font-size:15px;">folder</mat-icon>
         </div>
@@ -32,7 +32,7 @@
             <span style="margin-top: 2px;font-size:15px;float:left;margin-left:4px;"><i>12Feb2018</i></span>
             <mat-icon style="margin-top: 2px;font-size:15px;float:right;">folder</mat-icon>
             <span style="margin-top: 2px;font-size:15px;float:right;margin-right:6px;">v0.0.1</span>
-            <span style="margin-top: 2px;font-size:15px;float:right;margin-right:6px;">20GB</span>
+            <span style="margin-top: 2px;font-size:15px;float:right;margin-right:6px;">{{app.size}}</span>
         </div>
     </mat-card>   
     <mat-card class="GamePropertiesFull" style="padding:0px;" *ngIf="app.status == 'downloading'">
@@ -67,6 +67,17 @@
             <mat-icon style="font-size:15px;float:right;margin-right:6px;">folder</mat-icon>
             <span style="font-size:15px;float:right;margin-right:6px;">v0.0.1</span>
             <span style="font-size:15px;color: lightblue;float:right;margin-right:6px;">{{app.size}}</span>
+        </div>
+    </mat-card>      
+    <mat-card class="GameProperties" style="padding:0px;" *ngIf="app.status == 'unavailable'">
+      <div class="GameIcon"><mat-icon style="font-size:50px;
+        position: absolute;
+        bottom: 0px;
+        width: 80%;
+        height: 86%;
+        color: lightblue;">extension</mat-icon></div>
+        <div class="GamePropsMain">
+          <button mat-button style="margin-top: 8px;font-size:20px;color: lightblue;width:100%;" (click)="Install(app)" [disabled]="true">Coming soon</button>
         </div>
     </mat-card>    
 </div>

@@ -251,57 +251,28 @@ function read(html){
   console.log(html);
 }
 
-
-function GetDiff(directory, callback){
-  lock.acquire('GetDiff', function(cb){
-    var calculator = new SizeCalculator(directory, pathToDest, require('fs'));
-    calculator.mainCallback = callback;
-    calculator.RecursiveSizeCalculate(directory);
-    cb();
-  }, LockError);
-}
-
-function CheckLocalExists(directory, callback){
-  fs.exists(pathToDest+"/"+directory, (exists) => {
-    callback(exists);
-  });
-}
-
-function CheckUpdate(directory, callback){
-  
-  lock.acquire('GetDiff', function(cb){
-    var calculator = new SizeCalculator(directory, pathToDest, require('fs'));
-    calculator.mainCallback = callback;
-    calculator.RecursiveSizeCalculate(directory);
-    cb();
-  }, LockError);
-}
-
-function CheckRemoteExists(directory, callback){
-
-}
-
-
 window.addEventListener("get-project-status", function (event){
-  CheckLocalExists(event.detail.directory, function(exists) {
-    if(exists){
-      CheckUpdate(event.detail.directory, function(size){
-        if(!size.TotalSize>0){
-          window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"ready", project:event.detail.project}}));
-        }else{
-          window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"update", project:event.detail.project, size:size.TotalSize}}));
-        }
-      });
-    }
-    else{
-      window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"calculating", project:event.detail.project}}));
-      console.log("getting diff for"+event.detail.directory);
-      GetDiff(event.detail.directory, (size)=>{
-        console.log("got result "+bytesToSize(size.TotalSize));
-        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project, size:bytesToSize(size.TotalSize)}}));
-      });
-    }
-  });
+  lock.acquire('GetDiff', function(cb){
+    window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"calculating", project:event.detail.project, Size:0}}));
+
+    var calculator = new SizeCalculator(event.detail.directory, pathToDest, require('fs'));
+    calculator.mainCallback = (calculation)=>{
+      if(calculation.NoRemote){
+        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"unavailable", project:event.detail.project, Size:bytesToSize(calculation.TotalSize)}}));
+      }
+      else if(calculation.RequiresInstall){
+        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project, Size:bytesToSize(calculation.TotalSize)}}));
+      }
+      else if(calculation.RequiresUpdate){
+        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"update", project:event.detail.project, Size:bytesToSize(calculation.TotalSize), UpdateSize:bytesToSize(calculation.UpdateSize)}}));
+      }
+      else{
+        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"ready", project:event.detail.project, Size:bytesToSize(calculation.TotalSize)}}));
+      }
+    };
+    calculator.Start();
+    cb();
+  }, LockError);
 });
 
 function bytesToSize(bytes) {

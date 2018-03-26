@@ -14,9 +14,9 @@ export class HomeComponent implements OnInit {
     });
   }
   apps:any[] = [
-    {name: "Turn of War"            , directory:"ToW", description: "A game about ...", isAvailable:true, status:"ready"},
-    {name: "Turn of War - WW2 "     , directory:"ToWWW2", description: "A game about ...", isAvailable:true, status:"update"},
-    {name: "Poser 3D"               , directory:"Poser",launch:"Poser", description: "A game about ...", isAvailable:true, status:"downloading"},
+    {name: "Turn of War"            , directory:"ToW", description: "A game about ...", isAvailable:true, status:"available"},
+    {name: "Turn of War - WW2 "     , directory:"ToWWW2", description: "A game about ...", isAvailable:true, status:"available"},
+    {name: "Poser 3D"               , directory:"Poser",launch:"Poser", description: "A game about ...", isAvailable:true, status:"available"},
     {name: "Squad MOBA"             , directory:"MOBA", description: "A game about ...", isAvailable:false, status:"available"},
     {name: "The Valley"             , directory:"Valley", description: "A game about ...", isAvailable:true, status:"available"},
     {name: "Area of Operations"     , directory:"AoO", description: "A game about ...", isAvailable:false, status:"available"},
@@ -30,14 +30,15 @@ export class HomeComponent implements OnInit {
     {name: "Top Down/OTS Survival"  , directory:"TDS", description: "A game about ...", isAvailable:false, status:"available"},
   ];
 
-  @HostListener('window:project-status', ['$event', "$event.detail.state", "$event.detail.project"]) 
-  getStatus(event, state, project) {
+  @HostListener('window:project-status', ['$event', "$event.detail.state", "$event.detail.project", "$event.detail.Size"]) 
+  getStatus(event, state, project, Size) {
     console.log("status update received");
     this.apps.forEach(element => {
       if(element.name == project){
         element.status = state;
-        if(state == 'available'){
-          element.size = event.detail.size;
+        element.size = event.detail.Size;
+        if(state == 'update'){
+          element.UpdateSize = event.detail.UpdateSize;
         }
       }
     });

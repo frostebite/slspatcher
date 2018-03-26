@@ -17,6 +17,8 @@ class SizeCalculator{
         this.RequiresUpdate = false;
         this.UpdateSize = 0;
 
+        this.NoRemote = false;
+
         this.filesystem = filesystem;
     }
 
@@ -34,6 +36,10 @@ class SizeCalculator{
             this.DirectoriesScanned.push(job.path);
             if(this.DirectoriesScanned.length == this.DirectoriesFound.length){ 
                 console.log(this);
+                if(this.UpdateSize>0)
+                    this.RequiresUpdate = true;
+                if(this.TotalSize==0)
+                    this.NoRemote = true;
                 this.mainCallback(this);
             }
         }, path);
@@ -49,10 +55,12 @@ class SizeCalculator{
                     this.filesystem.stat(this.InstallationFolder+'/'+job.path+'/'+item.name, (err, stats) => {
                         if(stats == null){
                             this.TotalSize+=item.size;
+                            this.UpdateSize+=item.size;
                         }
                         else if(stats["size"] == item.size){
                             //if() present and size/date matches, is up-to-date
                             //do nothing
+                            this.TotalSize+=item.size;
                         }
                         else if(stats["size"] != item.size){
                             //if() present and not up-to-date
