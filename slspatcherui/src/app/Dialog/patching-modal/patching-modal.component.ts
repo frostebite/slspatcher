@@ -15,6 +15,6 @@ export class PatchingModalComponent implements OnInit {
   progress = 0; 
   @HostListener('window:app-patch-progress', ['$event', "$event.detail.progress"])
   openDialog(event, progress): void {
-    progress = progress;
+    this.progress = progress;
   }
 }
