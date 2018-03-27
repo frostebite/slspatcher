@@ -53,4 +53,9 @@ export class HomeComponent implements OnInit {
     console.log(app);
     window.dispatchEvent(new CustomEvent("launch-project", {detail:app}));
   }
+
+  Open(app){
+    console.log(app);
+    window.dispatchEvent(new CustomEvent("open-project-folder", {detail:app}));
+  }
 }

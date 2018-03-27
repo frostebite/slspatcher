@@ -21,7 +21,7 @@
             <span style="font-size:15px;color: lightblue;">{{app.UpdateSize}}</span>
             <span style="font-size:15px;">{{app.size}}</span>
             <span style="font-size:15px;">v0.0.1</span>
-            <mat-icon style="font-size:15px;">folder</mat-icon>
+            <mat-icon style="font-size:15px;cursor: pointer;"  (click)="Open(app)">folder</mat-icon>
         </div>
     </mat-card>  
     <mat-card class="GamePropertiesFull" style="padding:0px;" *ngIf="app.status == 'ready'">
@@ -30,7 +30,7 @@
         </div>
         <div class="GamePropsOtherFull">
             <span style="margin-top: 2px;font-size:15px;float:left;margin-left:4px;"><i>12Feb2018</i></span>
-            <mat-icon style="margin-top: 2px;font-size:15px;float:right;">folder</mat-icon>
+            <mat-icon style="margin-top: 2px;font-size:15px;float:right;cursor: pointer;"  (click)="Open(app)">folder</mat-icon>
             <span style="margin-top: 2px;font-size:15px;float:right;margin-right:6px;">v0.0.1</span>
             <span style="margin-top: 2px;font-size:15px;float:right;margin-right:6px;">{{app.size}}</span>
         </div>
@@ -44,7 +44,7 @@
             <span style="margin-top: 8px;font-size:15px;color: #ffd740;">0.5GB/1.5GB</span>
             <span style="margin-top: 8px;font-size:15px;">20GB</span>
             <span style="margin-top: 8px;font-size:15px;">v0.0.1</span>
-            <mat-icon style="margin-top: 8px;font-size:15px;">folder</mat-icon>
+            <mat-icon style="margin-top: 8px;font-size:15px;cursor: pointer;"  (click)="Open(app)">folder</mat-icon>
         </div>
     </mat-card>   
     <mat-card class="GamePropertiesFull" style="padding:0px;" *ngIf="app.status == 'calculating'">
@@ -64,7 +64,7 @@
           <button mat-button style="margin-top: 8px;font-size:20px;color: lightblue;width:100%;" (click)="Install(app)">Install</button>
         </div>
         <div class="GamePropsOther">
-            <mat-icon style="font-size:15px;float:right;margin-right:6px;">folder</mat-icon>
+            <mat-icon style="font-size:15px;float:right;margin-right:6px;cursor: pointer;"  (click)="Open(app)">folder</mat-icon>
             <span style="font-size:15px;float:right;margin-right:6px;">v0.0.1</span>
             <span style="font-size:15px;color: lightblue;float:right;margin-right:6px;">{{app.size}}</span>
         </div>

@@ -250,7 +250,6 @@ function startSync() {
 function read(html){
   console.log(html);
 }
-
 window.addEventListener("get-project-status", function (event){
   lock.acquire('GetDiff', function(cb){
     window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"calculating", project:event.detail.project, Size:0}}));
@@ -303,6 +302,12 @@ window.addEventListener("launch-project", function (event){
       console.log(data.toString());
   });
   
+});
+
+window.addEventListener("open-project-folder", function (event){
+  var executablePath = pathToDest+'/'+event.detail.directory;
+
+  require('child_process').exec('start "" "'+executablePath+'"');
 });
 
 function Delete(directory){
