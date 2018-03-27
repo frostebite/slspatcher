@@ -3,6 +3,7 @@ const electron = require('electron');
 const isDev = require('electron-is-dev');
 const autoUpdater = require("electron-updater").autoUpdater;
 const log = require('electron-log');
+var path = require('path');
 
 autoUpdater.logger = log;
 autoUpdater.logger.transports.file.level = 'info';
@@ -20,7 +21,10 @@ let mainWindow;
 
 function createWindow () {
   // Create the browser window.
-  mainWindow = new BrowserWindow({width: 1182, height: 749, 'accept-first-mouse': true,'title-bar-style': 'hidden', resizable:false});
+  mainWindow = new BrowserWindow({width: 1182, height: 749, 'accept-first-mouse': true,'title-bar-style': 'hidden', resizable:false,
+  backgroundColor: '#312450',
+  icon: path.join(__dirname, 'assets/icons/png/96x96.png')
+});
 
   // and load the index.html of the app.
   mainWindow.loadURL('file://' + __dirname + '/slspatcherui/dist/index.html');

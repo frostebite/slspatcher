@@ -7,9 +7,12 @@
   "build": {
     "appId": "sls.patcher",
     "nsis": {
+      "installerIcon": "icon.ico",
+      "uninstallerIcon": "icon.ico",
       "artifactName": "${name}-setup-${version}.exe"
     },
     "win": {
+      "icon": "icon.ico",
       "publish": [
         {
           "provider": "github",
