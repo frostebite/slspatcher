@@ -30,6 +30,6 @@ export class AppComponent implements OnInit {
 
   @HostListener('window:app-patch', ['$event'])
   openDialog(event): void {
-    let patchingDialog = this.dialog.open(PatchingModalComponent);
+    let patchingDialog = this.dialog.open(PatchingModalComponent, {disableClose: true});
   }
 }
