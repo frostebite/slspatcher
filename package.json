@@ -1,6 +1,6 @@
 {
   "name": "slspatcher",
-  "version": "0.1.18",
+  "version": "0.1.19",
   "description": "A minimal Electron application for patching",
   "main": "main.js",
   "author": "Fisher",
