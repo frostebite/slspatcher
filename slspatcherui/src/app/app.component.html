@@ -2,17 +2,17 @@
 <div *ngIf="!hasLoggedIn">
   <mat-card style="width:200px;height:220px;margin:100px auto;">
     <h3>Login</h3>
-    <form>
+    <form [formGroup]="LoginForm">
       <mat-form-field style="width:100%;">
-        <input matInput placeholder="Username or email">
+        <input matInput placeholder="Username or email" formControlName="loginid">
       </mat-form-field>
       <br style="clear:both;">
       <mat-form-field style="width:100%;">
-        <input matInput placeholder="Password">
+        <input matInput type="password" placeholder="Password" formControlName="password">
       </mat-form-field>
       <br style="clear:both;">
       <br style="clear:both;">
-      <button mat-raised-button color="primary" style="width:45%;">Register</button><button mat-raised-button color="primary" (click)="hasLoggedIn = true;" style="width:45%;margin-left:5%;">Login</button>
+      <button mat-raised-button color="primary" style="width:45%;">Register</button><button mat-raised-button color="primary" (click)="Login();" style="width:45%;margin-left:5%;">Login</button>
     </form>
   </mat-card>
 </div>

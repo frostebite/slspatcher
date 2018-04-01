@@ -7,7 +7,6 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './Components/home/home.component';
 import { SocialComponent } from './Components/social/social.component';
 import { SettingsComponent } from './Components/settings/settings.component';
-import { LoginComponent } from './Components/login/login.component';
 import { DeveloperComponent } from './Components/developer/developer.component';
 import { MissingComponent } from './Components/missing/missing.component';
 import { NgSlimScrollModule, SLIMSCROLL_DEFAULTS } from 'ngx-slimscroll';
@@ -18,6 +17,9 @@ import {MatInputModule} from '@angular/material/input';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {MatDialogModule} from '@angular/material/dialog';
 import { PatchingModalComponent } from './Dialog/patching-modal/patching-modal.component';
+import { ReactiveFormsModule } from '@angular/forms';
+import { HttpModule, JsonpModule } from '@angular/http';
+import { HttpClientModule } from '@angular/common/http';
 const appRoutes: Routes = [
   { path: 'developer', component: DeveloperComponent },
   { path: 'social',      component: SocialComponent },
@@ -37,13 +39,15 @@ const appRoutes: Routes = [
     HomeComponent,
     SocialComponent,
     SettingsComponent,
-    LoginComponent,
     DeveloperComponent,
     MissingComponent,
     PatchingModalComponent
   ],
   imports: [
     BrowserModule, MatCardModule, MatButtonModule, MatCheckboxModule, MatToolbarModule,MatIconModule,MatProgressBarModule,MatInputModule,BrowserAnimationsModule,MatDialogModule,
+    ReactiveFormsModule,
+    HttpModule,
+    HttpClientModule,
     RouterModule.forRoot(
       appRoutes,
       { enableTracing: true } // <-- debugging purposes only
