@@ -8,6 +8,8 @@ const path = require('path');
 var lock = new AsyncLock();
 let TotalFiles = 0;
 let FilesComplete = 0;
+let SizeTodo = 0;
+let SizeDownload = 0;
 GetConfigDir();
 function getFolderSelection() {
   var dialog = remote.dialog
@@ -98,6 +100,10 @@ function syncFile(item, path, isRetry = false, checkOnly = false){
                 callback();
                 lock.acquire('completeFilesLock', function(cb){
                   FilesComplete++;
+                  if(!isRetry)
+                  SizeDownload+=item.size;
+                  console.log(SizeTodo);
+                  console.log(SizeDownload);
                   updateMessage(project);
                   cb();
                 }, function(err, ret){
@@ -183,7 +189,7 @@ function updateMessage(){
     if(msg=="Done"){
       window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"ready", project:project}}));
     }else{
-      window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"downloading", project:project}}));
+      window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"downloading", project:project, DownloadSize:bytesToSize(SizeDownload)}}));
     }
   }else{
     window.dispatchEvent(new CustomEvent('syncing-all', {detail:{state:msg}}));
@@ -260,7 +266,7 @@ window.addEventListener("get-project-status", function (event){
         window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"unavailable", project:event.detail.project, Size:bytesToSize(calculation.TotalSize)}}));
       }
       else if(calculation.RequiresInstall){
-        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project, Size:bytesToSize(calculation.TotalSize)}}));
+        window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"available", project:event.detail.project, Size:bytesToSize(calculation.TotalSize), UpdateSize:bytesToSize(calculation.TotalSize)}}));
       }
       else if(calculation.RequiresUpdate){
         window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"update", project:event.detail.project, Size:bytesToSize(calculation.TotalSize), UpdateSize:bytesToSize(calculation.UpdateSize)}}));

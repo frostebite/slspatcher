@@ -1,35 +1,10 @@
-class SizeCalculator{
-    constructor(RootDirectory, InstallationFolder, filesystem){
-        this.RootDirectory = RootDirectory;
-        this.InstallationFolder = InstallationFolder;
-
-        this.DirectoriesScanned = new Array();
-        this.DirectoriesFound = new Array();
-        this.DirectoriesFound.push(this.RootDirectory);
-
-        this.mainCallback = ()=>{console.log("no callback for size calculator "+this.RootDirectory);};
-
-        this.RequiresInstall = false;
-        this.RemoteSize = 0;
-        this.LocalSize = 0;
-        this.TotalSize = 0;
-
-        this.RequiresUpdate = false;
-        this.UpdateSize = 0;
-
-        this.NoRemote = false;
-
-        this.filesystem = filesystem;
+class Syncer{
+    constructor(sizeCalculator){
+        this.sizeCalculator = sizeCalculator;
     }
-
     Start(){
-        //check local status
-        this.filesystem.stat(this.InstallationFolder+'/'+this.RootDirectory, (err, stats) => {
-            this.RequiresInstall = (stats == null);
-            this.RecursiveSizeCalculate(this.RootDirectory);
-        });
+        this.RecursiveSizeCalculate(this.RootDirectory);
     }
-
     RecursiveSizeCalculate(path){
         ListJob((job, list)=>{
             this.HandleFolder(job, list);
@@ -82,8 +57,4 @@ class SizeCalculator{
         lock.acquire('ToScan', (callback)=>{ this.DirectoriesFound.push(path+"/"+directoryName);callback();}, LockError);
         this.RecursiveSizeCalculate(path+"/"+directoryName);
     }
-}
-
-function LockError(err, ret){
-    if(err!=null) console.log(err.message);
 }
