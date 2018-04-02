@@ -17,10 +17,13 @@ function ListJob(callback, path){
     }, LockError);
 }
 
-/*function GetJob(callback, path){
-    this.jobs.push({type:"get",callback:callback, path:path});
-    JobsIgnition();
-}*/
+function GetJob(callback, path, item, InstallationFolder, filesystem){
+    lock.acquire('FTPJobs', (cb)=>{
+        this.jobs.push(new FTPJob("get",callback,path, item, InstallationFolder, filesystem));
+        JobsIgnition();
+        cb();
+    }, LockError);
+}
 
 function JobsIgnition(){
     if(this.client == null){
@@ -42,10 +45,13 @@ function JobCycle(){
 }
 
 class FTPJob{
-    constructor(type, callback, path){
+    constructor(type, callback, path, item = "", InstallationFolder="", filesystem = null){
         this.type = type;
         this.callback = callback;
         this.path = path;
+        this.item = item;
+        this.InstallationFolder = InstallationFolder;
+        this.filesystem = filesystem;
     }
     Process(client) {
         client.cwd(this.path, (err, currentDir)=>{
@@ -62,8 +68,20 @@ class FTPJob{
                         this.callback(this, list)
                     });
                 }
-                else if(job.type == "get"){
-                    client.get(item.name, (err, stream) => {this.callback(job, stream)});
+                else if(this.type == "get"){
+                    client.get(this.item, (err, stream) => {
+                        if(err){
+                            console.log(err);
+                            return;
+                        }
+                        console.log(this.InstallationFolder+'/'+this.path+'/'+this.item);
+                        stream.once('close', () => { this.callback(this); });
+                        stream.pipe(this.filesystem.createWriteStream(this.InstallationFolder+'/'+this.path+'/'+this.item));
+                        
+                    });
+                }
+                else{
+                    console.error("no handler for job type "+this.type);
                 }
             }
             else{

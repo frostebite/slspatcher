@@ -1,5 +1,5 @@
 class SizeCalculator{
-    constructor(RootDirectory, InstallationFolder, filesystem){
+    constructor(RootDirectory, InstallationFolder, filesystem, shell){
         this.RootDirectory = RootDirectory;
         this.InstallationFolder = InstallationFolder;
 
@@ -16,10 +16,15 @@ class SizeCalculator{
 
         this.RequiresUpdate = false;
         this.UpdateSize = 0;
+        this.UpdatedSize = 0;
 
         this.NoRemote = false;
 
         this.filesystem = filesystem;
+
+        this.sync = false;
+        
+        this.shell = shell;
     }
 
     Start(){
@@ -34,15 +39,19 @@ class SizeCalculator{
         ListJob((job, list)=>{
             this.HandleFolder(job, list);
             this.DirectoriesScanned.push(job.path);
-            if(this.DirectoriesScanned.length == this.DirectoriesFound.length){ 
-                console.log(this);
-                if(this.UpdateSize>0)
-                    this.RequiresUpdate = true;
-                if(this.TotalSize==0)
-                    this.NoRemote = true;
-                this.mainCallback(this);
-            }
+            this.HandleCompletion();
         }, path);
+    }
+
+    HandleCompletion(){
+        if(this.DirectoriesScanned.length == this.DirectoriesFound.length){ 
+            console.log(this);
+            if(this.UpdateSize>0)
+                this.RequiresUpdate = true;
+            if(this.TotalSize==0)
+                this.NoRemote = true;
+            this.mainCallback(this);
+        }
     }
 
     HandleFolder(job, list){
@@ -56,6 +65,9 @@ class SizeCalculator{
                         if(stats == null){
                             this.TotalSize+=item.size;
                             this.UpdateSize+=item.size;
+                            if(this.sync){
+                                this.SyncFile(job, item);
+                            }
                         }
                         else if(stats["size"] == item.size){
                             //if() present and size/date matches, is up-to-date
@@ -66,6 +78,9 @@ class SizeCalculator{
                             //if() present and not up-to-date
                             this.TotalSize+=item.size;
                             this.UpdateSize+=item.size;
+                            if(this.sync){
+                                this.SyncFile(job, item);
+                            }
                         }
                         else{
                             console.error("bad file state in HandleFolder");
@@ -78,8 +93,30 @@ class SizeCalculator{
         }
     }
 
+    SyncFile(job, item){
+        lock.acquire('DownloadingFile', (cb)=>{
+            this.shell.mkdir('-p', this.InstallationFolder+"/"+job.path+"/");
+            GetJob((getJob)=>{
+                this.UpdatedSize+=item.size;
+                console.log("--sync--");
+                console.log(getJob);
+                console.log(job);
+                console.log(item);
+                console.log(this);
+                console.log("----");
+                cb();
+            }, job.path, item.name, this.InstallationFolder, this.filesystem);
+        }, function(err, ret){
+            if(err!=null)
+            console.log(err.message) // output: error
+        });
+    }
+
     HandleDirectoryItem(path, directoryName){
-        lock.acquire('ToScan', (callback)=>{ this.DirectoriesFound.push(path+"/"+directoryName);callback();}, LockError);
+        lock.acquire('ToScan', (callback)=>{ 
+            this.DirectoriesFound.push(path+"/"+directoryName);
+            callback();
+        }, LockError);
         this.RecursiveSizeCalculate(path+"/"+directoryName);
     }
 }

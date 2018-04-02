@@ -86,6 +86,7 @@ function syncFile(item, path, isRetry = false, checkOnly = false){
           });
         }
         console.log("syncing file "+item.name);
+        console.log("syncing path "+path);
         var Client = require('ftp');
         var c = new Client();
         c.on('ready', function() {
@@ -289,7 +290,12 @@ function bytesToSize(bytes) {
 
 window.addEventListener("install-project", function (event){
   project = event.detail.name;
-  syncDir(event.detail.directory);
+  //syncDir(event.detail.directory);
+  
+  var calculator = new SizeCalculator(event.detail.directory, pathToDest, require('fs'), require('shelljs'));
+  calculator.sync = true;
+  calculator.mainCallback = (calculation)=>{console.log("syncing")};
+  calculator.Start();
 });
 
 function Update(directory){
