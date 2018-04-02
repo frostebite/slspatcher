@@ -36,25 +36,21 @@ class SizeCalculator{
     }
 
     RecursiveSizeCalculate(path){
-        console.log("starting on path "+path);
-        console.log(this);
-        ListJob((job, list)=>{
-            this.HandleFolder(job, list);
-            console.log("finished on path "+path);
-            lock.acquire('HandlingFolder', (cb)=>{
+        console.log("size calc "+path);
+        lock.acquire('Scanning', (callback)=>{ 
+            console.log("lock aquired for size calc "+path);
+            ListJob((job, list)=>{
+                console.log("list job done "+path);
+                this.HandleFolder(job, list);
                 this.DirectoriesScanned.push(job.path);
                 this.HandleCompletion();
-                cb();
-            }, function(err, ret){
-                if(err!=null)
-                console.log(err.message) // output: error
-            });
-        }, path);
+                callback();
+            }, path);
+        }, LockError);
     }
 
     HandleCompletion(){
         if(this.DirectoriesScanned.length == this.DirectoriesFound.length){ 
-            console.log(this);
             if(this.UpdateSize>0)
                 this.RequiresUpdate = true;
             if(this.TotalSize==0)
@@ -64,70 +60,52 @@ class SizeCalculator{
     }
 
     HandleFolder(job, list){
-        lock.acquire('HandlingFolder', (cb)=>{
-            if(list != null){
-                list.forEach((item) => { 
-                    console.log(item);
-                    if(item.type == "d"){
-                        
-                        this.HandleDirectoryItem(job.path, item.name);
+        if(list != null){
+            list.forEach((item)=>{
+                this.HandleFolderItem(job, item);
+            });
+        }
+    }
+
+    HandleFolderItem(job, item){
+        if(item.type == "d"){
+            this.DirectoriesFound.push(job.path+"/"+item.name);
+            this.RecursiveSizeCalculate(job.path+"/"+item.name);
+        }
+        else{
+            this.filesystem.stat(this.InstallationFolder+'/'+job.path+'/'+item.name, (err, stats) => {
+                if(stats == null){
+                    this.TotalSize+=item.size;
+                    this.UpdateSize+=item.size;
+                    if(this.sync){
+                        this.SyncFile(job, item);
                     }
-                    else{
-                        this.filesystem.stat(this.InstallationFolder+'/'+job.path+'/'+item.name, (err, stats) => {
-                            if(stats == null){
-                                this.TotalSize+=item.size;
-                                this.UpdateSize+=item.size;
-                                if(this.sync){
-                                    this.SyncFile(job, item);
-                                }
-                            }
-                            else if(stats["size"] == item.size){
-                                //if() present and size/date matches, is up-to-date
-                                //do nothing
-                                this.TotalSize+=item.size;
-                            }
-                            else if(stats["size"] != item.size){
-                                //if() present and not up-to-date
-                                this.TotalSize+=item.size;
-                                this.UpdateSize+=item.size;
-                                if(this.sync){
-                                    this.SyncFile(job, item);
-                                }
-                            }
-                            else{
-                                console.error("bad file state in HandleFolder");
-                                console.error(this);
-                            }
-                            //old: this.HandleListItem(job.path, item);
-                        });
+                }
+                else if(stats["size"] == item.size){
+                    this.TotalSize+=item.size;
+                }
+                else if(stats["size"] != item.size){
+                    this.TotalSize+=item.size;
+                    this.UpdateSize+=item.size;
+                    if(this.sync){
+                        this.SyncFile(job, item);
                     }
-                });
-            }
-            cb();
-        });
+                }
+                else{
+                    console.error("bad file state in HandleFolder");
+                    console.error(this);
+                }
+            });
+        }
     }
 
     SyncFile(job, item){
-        lock.acquire('DownloadingFile', (cb)=>{
+        GetJob((getJob, stream)=>{
+            this.UpdatedSize+=item.size;
             this.shell.mkdir('-p', this.InstallationFolder+"/"+job.path+"/");
-            GetJob((getJob)=>{
-                this.UpdatedSize+=item.size;
-                cb();
-            }, job.path, item.name, this.InstallationFolder, this.filesystem);
-        }, function(err, ret){
-            if(err!=null)
-            console.log(err.message) // output: error
-        });
-    }
-
-    HandleDirectoryItem(path, directoryName){
-        lock.acquire('ToScan', (callback)=>{ 
-            this.DirectoriesFound.push(path+"/"+directoryName);
-            callback();
-        }, (err, ret)=>{
-            if(err!=null) console.log(err.message);
-            this.RecursiveSizeCalculate(path+"/"+directoryName);
-        });
+            stream.once('close', () => { console.log("download complete"); });
+            stream.pipe(this.filesystem.createWriteStream(this.InstallationFolder+'/'+this.path+'/'+this.item));
+        }, job.path, item.name);
     }
 }
 
