@@ -58,6 +58,7 @@ export class AppComponent implements OnInit {
   }
 
   Logout(){
+    localStorage.removeItem('auth-token');
     this.hasLoggedIn = false;
   }
 }
