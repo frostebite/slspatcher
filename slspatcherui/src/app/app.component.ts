@@ -21,6 +21,8 @@ export class AppComponent implements OnInit {
         loginid: ['', Validators.required],
         password: ['', Validators.required]
     }, {});
+    console.log(localStorage.getItem("auth-token"));
+    this.hasLoggedIn = localStorage.getItem("auth-token") != null;
   }
   ngOnInit(): void {
       this.version = window.localStorage.getItem("version");
@@ -50,6 +52,7 @@ export class AppComponent implements OnInit {
     this.http.post("http://api.uk-sf.com/api/authtoken", this.LoginForm.value).subscribe(Result=>{
       if(Result["result"]=="success"){
         this.hasLoggedIn = true;
+        localStorage.setItem('auth-token', Result["token"]);
       }
     });
   }

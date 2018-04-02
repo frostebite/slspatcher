@@ -36,10 +36,19 @@ class SizeCalculator{
     }
 
     RecursiveSizeCalculate(path){
+        console.log("starting on path "+path);
+        console.log(this);
         ListJob((job, list)=>{
             this.HandleFolder(job, list);
-            this.DirectoriesScanned.push(job.path);
-            this.HandleCompletion();
+            console.log("finished on path "+path);
+            lock.acquire('HandlingFolder', (cb)=>{
+                this.DirectoriesScanned.push(job.path);
+                this.HandleCompletion();
+                cb();
+            }, function(err, ret){
+                if(err!=null)
+                console.log(err.message) // output: error
+            });
         }, path);
     }
 
@@ -55,42 +64,47 @@ class SizeCalculator{
     }
 
     HandleFolder(job, list){
-        if(list != null){
-            list.forEach((item) => { 
-                if(item.type == "d"){
-                    this.HandleDirectoryItem(job.path, item.name);
-                }
-                else{
-                    this.filesystem.stat(this.InstallationFolder+'/'+job.path+'/'+item.name, (err, stats) => {
-                        if(stats == null){
-                            this.TotalSize+=item.size;
-                            this.UpdateSize+=item.size;
-                            if(this.sync){
-                                this.SyncFile(job, item);
+        lock.acquire('HandlingFolder', (cb)=>{
+            if(list != null){
+                list.forEach((item) => { 
+                    console.log(item);
+                    if(item.type == "d"){
+                        
+                        this.HandleDirectoryItem(job.path, item.name);
+                    }
+                    else{
+                        this.filesystem.stat(this.InstallationFolder+'/'+job.path+'/'+item.name, (err, stats) => {
+                            if(stats == null){
+                                this.TotalSize+=item.size;
+                                this.UpdateSize+=item.size;
+                                if(this.sync){
+                                    this.SyncFile(job, item);
+                                }
                             }
-                        }
-                        else if(stats["size"] == item.size){
-                            //if() present and size/date matches, is up-to-date
-                            //do nothing
-                            this.TotalSize+=item.size;
-                        }
-                        else if(stats["size"] != item.size){
-                            //if() present and not up-to-date
-                            this.TotalSize+=item.size;
-                            this.UpdateSize+=item.size;
-                            if(this.sync){
-                                this.SyncFile(job, item);
+                            else if(stats["size"] == item.size){
+                                //if() present and size/date matches, is up-to-date
+                                //do nothing
+                                this.TotalSize+=item.size;
                             }
-                        }
-                        else{
-                            console.error("bad file state in HandleFolder");
-                            console.error(this);
-                        }
-                        //old: this.HandleListItem(job.path, item);
-                    });
-                }
-            });
-        }
+                            else if(stats["size"] != item.size){
+                                //if() present and not up-to-date
+                                this.TotalSize+=item.size;
+                                this.UpdateSize+=item.size;
+                                if(this.sync){
+                                    this.SyncFile(job, item);
+                                }
+                            }
+                            else{
+                                console.error("bad file state in HandleFolder");
+                                console.error(this);
+                            }
+                            //old: this.HandleListItem(job.path, item);
+                        });
+                    }
+                });
+            }
+            cb();
+        });
     }
 
     SyncFile(job, item){
@@ -98,12 +112,6 @@ class SizeCalculator{
             this.shell.mkdir('-p', this.InstallationFolder+"/"+job.path+"/");
             GetJob((getJob)=>{
                 this.UpdatedSize+=item.size;
-                console.log("--sync--");
-                console.log(getJob);
-                console.log(job);
-                console.log(item);
-                console.log(this);
-                console.log("----");
                 cb();
             }, job.path, item.name, this.InstallationFolder, this.filesystem);
         }, function(err, ret){
@@ -116,8 +124,10 @@ class SizeCalculator{
         lock.acquire('ToScan', (callback)=>{ 
             this.DirectoriesFound.push(path+"/"+directoryName);
             callback();
-        }, LockError);
-        this.RecursiveSizeCalculate(path+"/"+directoryName);
+        }, (err, ret)=>{
+            if(err!=null) console.log(err.message);
+            this.RecursiveSizeCalculate(path+"/"+directoryName);
+        });
     }
 }
 

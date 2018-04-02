@@ -61,10 +61,10 @@ class FTPJob{
                 if(this.type == "list"){
                     client.list((err, list) => {
                         if(err!=null){
+                            console.log(err);
                             return;
                         }
                         console.log(list);
-                        console.log(this.path);
                         this.callback(this, list)
                     });
                 }
@@ -74,7 +74,6 @@ class FTPJob{
                             console.log(err);
                             return;
                         }
-                        console.log(this.InstallationFolder+'/'+this.path+'/'+this.item);
                         stream.once('close', () => { this.callback(this); });
                         stream.pipe(this.filesystem.createWriteStream(this.InstallationFolder+'/'+this.path+'/'+this.item));
                         
