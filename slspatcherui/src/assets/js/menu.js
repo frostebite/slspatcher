@@ -10,7 +10,9 @@ let TotalFiles = 0;
 let FilesComplete = 0;
 let SizeTodo = 0;
 let SizeDownload = 0;
+
 GetConfigDir();
+
 function getFolderSelection() {
   var dialog = remote.dialog
   var selection = dialog.showOpenDialog({ properties: ['openDirectory']})
@@ -28,155 +30,6 @@ function openDestFolder() {
   pathToDest = getFolderSelection();
   SaveConfig(pathToDest);
   GetConfigDir();
-}
-
-
-function syncDir(path){
-  console.log("checking dir "+path);
-  var Client = require('ftp');
-   
-  var c = new Client();
-  c.on('ready', function() {
-    c.cwd(path, function(){
-      c.list(function(err, list) {
-        if (err) syncDir(path);
-        try{
-          list.forEach(function(item) {
-            if(item.type == "d"){
-              syncDir(path+"/"+item.name);
-            }
-            else{
-              syncFile(item, path);
-            }
-          });
-          trimDeletedFiles(list, path);
-          c.end();
-        }catch(err){
-          syncDir(path);
-        }
-      });
-    });
-  });
-  var config = {
-    host:"arma.uk-sf.com",
-    user:"SLSREAD",
-    password:"password"
-  };
-  // connect to localhost:21 as anonymous 
-  c.connect(config);
-}
-
-function syncFile(item, path, isRetry = false, checkOnly = false){
-
-  var fs = require('fs');
-
-  fs.stat(pathToDest+'/'+path+"/"+item.name, function(err, stats) {
-
-    if (stats==null || stats["size"] != item.size) {
-      
-      lock.acquire('GetFile', function(callback){
-        if(!isRetry){
-          lock.acquire('TotalFilesLock', function(cb){
-            TotalFiles++;
-            updateMessage(project);
-            cb();
-          }, function(err, ret){
-            if(err!=null)
-            console.log(err.message) // output: error
-          });
-        }
-        console.log("syncing file "+item.name);
-        console.log("syncing path "+path);
-        var Client = require('ftp');
-        var c = new Client();
-        c.on('ready', function() {
-          c.cwd(path, function(){
-            c.get(item.name, function(err, stream) {
-              try{
-                stream.once('close', function() { c.end(); });
-                var shell = require('shelljs');
-                shell.mkdir('-p', pathToDest+"/"+path+"/");
-                console.log(pathToDest+'/'+path+"/"+item.name);
-                stream.pipe(fs.createWriteStream(pathToDest+'/'+path+"/"+item.name));
-                callback();
-                lock.acquire('completeFilesLock', function(cb){
-                  FilesComplete++;
-                  if(!isRetry)
-                  SizeDownload+=item.size;
-                  console.log(SizeTodo);
-                  console.log(SizeDownload);
-                  updateMessage(project);
-                  cb();
-                }, function(err, ret){
-                  if(err!=null)
-                  console.log(err.message) // output: error
-                });
-              }catch(err){
-                callback();
-                syncFile(item, path, true);
-              }
-            });
-          });
-        });
-        var config = {
-          host:"arma.uk-sf.com",
-          user:"SLSREAD",
-          password:"password"
-        };
-        // connect to localhost:21 as anonymous 
-        c.connect(config);
-      }, function(err, ret){
-        if(err!=null)
-        console.log(err.message) // output: error
-      });
-    }
-    else{
-      console.log("skipping file "+item.name);
-    }
-  });
-
-  
-}
-function scanAll(path){
-  console.log("checking dir "+path);
-  var Client = require('ftp');
-   
-  var c = new Client();
-  c.on('ready', function() {
-    c.cwd(path, function(){
-      c.list(function(err, list) {
-        if (err) syncDir(path);
-        try{
-          list.forEach(function(item) {
-            if(item.type == "d"){
-              scanAll(path+"/"+item.name);
-            }
-            else{
-              lock.acquire('TotalFilesLock', function(cb){
-                totalGb += item.size;
-                updateMessage(project);
-                cb();
-              }, function(err, ret){
-                if(err!=null)
-                console.log(err.message) // output: error
-              });
-            }
-          });
-          trimDeletedFiles(list, path);
-          c.end();
-        }catch(err){
-          syncDir(path);
-        }
-      });
-    });
-  });
-  var config = {
-    host:"arma.uk-sf.com",
-    user:"SLSREAD",
-    password:"password"
-  };
-  // connect to localhost:21 as anonymous 
-  c.connect(config);
 }
 
 function updateMessage(){
@@ -220,43 +73,6 @@ function trimDeletedFiles(remoteList, path){
   });
 }
 
-function startSync() {
-  var Client = require('ftp');
-  
-  var c = new Client();
-  c.on('ready', function() {
-    c.list(function(err, list) {
-      if (err) throw err;
-      try{
-        console.log(list);
-        list.forEach(function(item) {
-          if(item.type == "d"){
-            syncDir("/"+item.name);
-          }
-          else{
-            syncFile(item, "/");
-          }
-        });
-        trimDeletedFiles(list, "");
-    
-        c.end();
-      }catch(err){
-        syncDir("/");
-      }
-    });
-  });
-  var config = {
-    host:"arma.uk-sf.com",
-    user:"SLSREAD",
-    password:"password"
-  };
-  // connect to localhost:21 as anonymous 
-  c.connect(config);
-}
-
-function read(html){
-  console.log(html);
-}
 window.addEventListener("get-project-status", function (event){
   lock.acquire('GetDiff', function(cb){
     window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"calculating", project:event.detail.project, Size:0}}));
