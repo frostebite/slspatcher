@@ -33,7 +33,7 @@ export class HomeComponent implements OnInit {
   @HostListener('window:project-status', ['$event', "$event.detail.state", "$event.detail.project"]) 
   getStatus(event, state, project) {
     this.apps.forEach(element => {
-      if(element.name == project){
+      if(element.name == project || element.directory == project){
         element.status = state;
         if(event.detail.Size)
           element.size = event.detail.Size;

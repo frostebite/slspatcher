@@ -44,11 +44,14 @@ class SizeCalculator{
     }
 
     HandleCompletion(){
+        console.log("is complete?");
+        console.log(this);
         if(this.DirectoriesScanned.length == this.DirectoriesFound.length){ 
             if(this.UpdateSize>0)
                 this.RequiresUpdate = true;
             if(this.TotalSize==0)
                 this.NoRemote = true;
+                window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"ready", project:this.RootDirectory, Size:this.BytesToSize(this.TotalSize)}}));
             this.mainCallback(this);
         }
     }
@@ -58,6 +61,9 @@ class SizeCalculator{
             list.forEach((item)=>{
                 this.HandleFolderItem(job, item);
             });
+            if(this.sync){
+                this.TrimDeletedFiles(list, job.path);
+            }
         }
     }
 
@@ -102,8 +108,36 @@ class SizeCalculator{
             this.UpdatedSize+=item.size;
             stream.once('close', () => { console.log("download complete"); });
             stream.pipe(this.filesystem.createWriteStream(this.InstallationFolder+'/'+getJob.path+'/'+getJob.item));
+            window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"downloading", project:this.RootDirectory, DownloadSize:this.BytesToSize(this.UpdatedSize), UpdatedSize:this.BytesToSize(this.UpdateSize), Size:this.BytesToSize(this.TotalSize)}}));
         }, job.path, item.name);
     }
+
+    TrimDeletedFiles(remoteList, path){
+        this.filesystem.readdir(this.InstallationFolder+'/'+path, (err, localList)=>{
+        if(localList == null) return;
+        for (var i=0; i<localList.length; i++) {
+            var remoteMatch = false;
+            for (var w=0; w<remoteList.length; w++) {
+                if(localList[i]==remoteList[w].name){
+                    remoteMatch = true;
+                }
+            }
+            if(!remoteMatch){
+                this.filesystem.unlink(this.InstallationFolder+'/'+path+"/"+localList[i], (err)=>{
+                    if(err) console.error(err);
+                });
+            }
+        }
+        });
+    }
+
+    
+    BytesToSize(bytes) {
+        var sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+        if (bytes == 0) return '0 Byte';
+        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
+        return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+    };
 }
 
 function LockError(err, ret){
