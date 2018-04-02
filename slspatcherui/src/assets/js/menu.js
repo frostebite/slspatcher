@@ -275,9 +275,9 @@ window.addEventListener("get-project-status", function (event){
       else{
         window.dispatchEvent(new CustomEvent('project-status', {detail:{state:"ready", project:event.detail.project, Size:bytesToSize(calculation.TotalSize)}}));
       }
+      cb();
     };
     calculator.Start();
-    cb();
   }, LockError);
 });
 

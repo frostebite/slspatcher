@@ -38,21 +38,12 @@ function JobsIgnition(){
 }
 
 function JobCycle(){
-    console.log("attempting to cycle jobs");
-    lock.acquire('FTPJobs', (cb)=>{
-        console.log("got lock");
-        console.log(jobs);
         while(jobs.length>0){
-                job = jobs.pop();
-                console.log(job);
-                job.Process(this.client);
+            job = jobs.pop();
+            job.Process(this.client);
         }
+        //possible error state here
         this.client = null;
-        cb();
-    }, (err, ret)=>{
-        if(this.client)
-            JobCycle();
-    });
 }
 
 class FTPJob{
@@ -63,17 +54,24 @@ class FTPJob{
         this.item = item;
     }
     Process(client) {
-        client.cwd("/"+this.path, (err, currentDir)=>{
-            console.log("starting to process an FTP Job:");
-            console.log(currentDir);
-            console.log(this);
-            console.log(" ");
-            if(this.type == "list") this.ProcessList(client);
-            else if(this.type == "get") this.ProcessGet(client);
-        });
+        lock.acquire('ProcessingFTP', (cb)=>{
+            client.cwd("/"+this.path, (err, currentDir)=>{
+                if(err || !currentDir){
+                    this.callback(this, null);
+                    cb();
+                    return;
+                }
+                console.log("starting to process an FTP Job:");
+                console.log(currentDir);
+                console.log(this);
+                console.log(" ");
+                if(this.type == "list") this.ProcessList(client, cb);
+                else if(this.type == "get") this.ProcessGet(client, cb);
+            });
+        }, LockError);
     }
 
-    ProcessGet(client){
+    ProcessGet(client, cb){
         client.get(this.item, (err, stream) => {
             if(err){
                 console.log("error in get job:");
@@ -82,10 +80,11 @@ class FTPJob{
                 return;
             }
             this.callback(this, stream);
+            cb();
         });
     }
 
-    ProcessList(client){
+    ProcessList(client, cb){
         client.list((err, list) => {
             if(err){
                 console.log("error in list job:");
@@ -94,6 +93,7 @@ class FTPJob{
                 return;
             }
             this.callback(this, list);
+            cb();
         });
     }
 }

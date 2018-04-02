@@ -36,17 +36,11 @@ class SizeCalculator{
     }
 
     RecursiveSizeCalculate(path){
-        console.log("size calc "+path);
-        lock.acquire('Scanning', (callback)=>{ 
-            console.log("lock aquired for size calc "+path);
-            ListJob((job, list)=>{
-                console.log("list job done "+path);
-                this.HandleFolder(job, list);
-                this.DirectoriesScanned.push(job.path);
-                this.HandleCompletion();
-                callback();
-            }, path);
-        }, LockError);
+        ListJob((job, list)=>{
+            this.HandleFolder(job, list);
+            this.DirectoriesScanned.push(job.path);
+            this.HandleCompletion();
+        }, path);
     }
 
     HandleCompletion(){
@@ -69,6 +63,9 @@ class SizeCalculator{
 
     HandleFolderItem(job, item){
         if(item.type == "d"){
+            console.log("found subdirectory:");
+            console.log(job);
+            console.log(item);
             this.DirectoriesFound.push(job.path+"/"+item.name);
             this.RecursiveSizeCalculate(job.path+"/"+item.name);
         }
@@ -100,11 +97,11 @@ class SizeCalculator{
     }
 
     SyncFile(job, item){
+        this.shell.mkdir('-p', this.InstallationFolder+"/"+job.path+"/");
         GetJob((getJob, stream)=>{
             this.UpdatedSize+=item.size;
-            this.shell.mkdir('-p', this.InstallationFolder+"/"+job.path+"/");
             stream.once('close', () => { console.log("download complete"); });
-            stream.pipe(this.filesystem.createWriteStream(this.InstallationFolder+'/'+this.path+'/'+this.item));
+            stream.pipe(this.filesystem.createWriteStream(this.InstallationFolder+'/'+getJob.path+'/'+getJob.item));
         }, job.path, item.name);
     }
 }
