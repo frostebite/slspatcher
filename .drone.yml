@@ -1,0 +1,6 @@
+pipeline:
+  build:
+    image: ubuntu
+    secrets:  [ gcloud_key ]
+    commands:
+     - ls
