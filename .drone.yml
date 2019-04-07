@@ -14,7 +14,8 @@ pipeline:
      - cd ./slspatcherui
      - npm run-script ebuild
      - npm install -g github-release-cli
-     - github-release upload --owner frostebite --repo slspatcher --tag v0.2.0 --name 0.0.1 --body "This release contains bug fixes and imporvements, including:\n..." --token $${GITHUB_TOKEN} "./dist/*.zip"
+     - ls
+     - github-release upload --owner frostebite --repo slspatcher --tag v0.2.0 --name 0.0.1 --body "This release contains bug fixes and imporvements, including:\n..." --token "${GITHUB_TOKEN}" "./dist/*.zip"
      
   build_tag_deploy: 
     image: ubuntu
