@@ -11,3 +11,18 @@ pipeline:
      - npm install
      - cd ./slspatcherui
      - npm run-script ebuild
+    build_tag_deploy: 
+      image: node
+      secrets:  [ gcloud_key ]
+      when:
+        event: tag
+      commands:
+       - npm install -g github-release-cli
+       - >-
+         github-release upload \
+         --owner frostebite \
+         --repo slspatcherui \
+         --tag "v0.1.0" \
+         --name "v0.1.0" \
+         --body "This release contains bug fixes and imporvements, including:\n..." \
+         archive.zip index.html app.min.css app.min.js
