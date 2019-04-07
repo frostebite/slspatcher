@@ -9,16 +9,16 @@ pipeline:
      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
      - apt-get update > /dev/null
-     - npm install --prefix ./slspatcherui > /dev/null
-     - npm install > /dev/null
+     # build ui
      - cd ./slspatcherui
-     - npm run-script ebuild
+     - npm install > /dev/null
+     - npm run-script build
+     # build app wrapper
+     - cd ..
+     - npm install > /dev/null
+     - yarn dist
+     # release
      - npm install -g publish-release
-     - cd ..
-     - ls
-     - cd dist
-     - ls
-     - cd ..
      - npm install --global release-it
      - release-it -n
   build_tag_deploy: 
