@@ -9,12 +9,12 @@ pipeline:
      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
      - apt-get update > /dev/null
-     - npm install --prefix ./slspatcherui
-     - npm install
+     - npm install --prefix ./slspatcherui > /dev/null
+     - npm install > /dev/null
      - cd ./slspatcherui
      - npm run-script ebuild
      - npm install -g github-release-cli
-     - github-release upload --owner $${DRONE_REPO_NAMESPACE} --repo $${DRONE_REPO_NAME} --tag 0.0.1 --name 0.0.1 --body "This release contains bug fixes and imporvements, including:\n..." --token $${GITHUB_TOKEN} "./dist/*.zip"
+     - github-release upload --owner frostebite --repo slspatcher --tag v0.2.0 --name 0.0.1 --body "This release contains bug fixes and imporvements, including:\n..." --token $${GITHUB_TOKEN} "./dist/*.zip"
      
   build_tag_deploy: 
     image: ubuntu
