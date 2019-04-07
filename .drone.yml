@@ -16,7 +16,7 @@ pipeline:
      # build app wrapper
      - cd ..
      - npm install > /dev/null
-     - yarn dist
+     - npm run-script dist
      # release
      - npm install --global release-it
      - release-it -n
