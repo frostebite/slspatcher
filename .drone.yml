@@ -9,5 +9,5 @@ pipeline:
      - apt install yarn -y
      - npm install --prefix ./slspatcherui
      - npm install
-     - npm run-script build --prefix ./slspatcherui
-     - npm run-script start
+     - cd ./slspatcherui
+     - npm run-script ebuild
