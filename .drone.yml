@@ -1,6 +1,9 @@
 pipeline:
   build:
-    image: ubuntu
+    image: node
     secrets:  [ gcloud_key ]
     commands:
-     - ls
+     - npm install --prefix ./slspatcherui
+     - npm install
+     - npm run-script build --prefix ./slspatcherui
+     - npm run-script start

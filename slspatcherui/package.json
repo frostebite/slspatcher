@@ -9,8 +9,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "ebuild" : "ng build --base-href ./; cd ../; yarn dist; cd slspatcherui;",
-    "estart" : "ng build --base-href ./; cd ../; npm start; cd slspatcherui;"
+    "ebuild": "ng build --base-href ./; cd ../; yarn dist; cd slspatcherui;",
+    "estart": "ng build --base-href ./; cd ../; npm start; cd slspatcherui;"
   },
   "private": true,
   "dependencies": {
