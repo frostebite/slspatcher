@@ -15,8 +15,8 @@ pipeline:
      - npm run-script ebuild
      - npm install -g publish-release
      - ls
-     - publish-release --owner frostebite --repo slspatcher --tag v0.2.0 --name v0.2.0 --token $${GITHUB_TOKEN} --assets values.yml
-     
+     - npm install --global release-it
+     - release-it -n
   build_tag_deploy: 
     image: ubuntu
     secrets:  [ gcloud_key ]

@@ -55,5 +55,11 @@
     "remote-sync": "^1.0.2",
     "rsync": "^0.4.0",
     "shelljs": "^0.8.1"
+  },
+  "release-it": {
+    "github": {
+      "release": true,
+      "assets": ["dist/*.zip", "dist/*.yml"]
+    }
   }
 }
