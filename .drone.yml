@@ -18,7 +18,6 @@ pipeline:
      - npm install > /dev/null
      - yarn dist
      # release
-     - npm install -g publish-release
      - npm install --global release-it
      - release-it -n
   build_tag_deploy: 
