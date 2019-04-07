@@ -19,7 +19,8 @@
         {
           "provider": "github",
           "owner": "frostebite",
-          "repo": "slspatcher"
+          "repo": "slspatcher",
+          "vPrefixedTagName": true
         }
       ]
     },
