@@ -1,9 +1,8 @@
 pipeline:
   build:
     image: electronuserland/builder:wine
-    secrets:  [ gcloud_key, github_token ]
+    secrets:  [ gh_token ]
     commands:
-     - export GH_TOKEN=$${GITHUB_TOKEN}
      - apt-get update > /dev/null
      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
      - sh -c 'echo "deb https://dl.yarnpkg.com/debian/ stable main" >> /etc/apt/sources.list.d/yarn.list'
@@ -29,7 +28,7 @@ pipeline:
      - release-it -n
   build_tag_deploy: 
     image: electronuserland/builder:wine
-    secrets:  [ gcloud_key ]
+    secrets:  [ ]
     when:
       event: tag
     commands:
