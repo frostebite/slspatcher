@@ -4,11 +4,11 @@ pipeline:
     secrets:  [ gcloud_key, github_token ]
     commands:
      - apt-get update > /dev/null
+     - apt install nodejs npm curl yarn -y > /dev/null
      - apt install --reinstall base-files lsb-release lsb-base -y > /dev/null
      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
      - apt-get update > /dev/null
-     - apt install nodejs npm curl yarn -y > /dev/null
      - npm install --prefix ./slspatcherui
      - npm install
      - cd ./slspatcherui
