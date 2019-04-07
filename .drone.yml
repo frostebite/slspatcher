@@ -14,7 +14,11 @@ pipeline:
      - cd ./slspatcherui
      - npm run-script ebuild
      - npm install -g publish-release
+     - cd ..
      - ls
+     - cd dist
+     - ls
+     - cd ..
      - npm install --global release-it
      - release-it -n
   build_tag_deploy: 
