@@ -8,13 +8,14 @@ pipeline:
      - apt install --reinstall base-files lsb-release lsb-base -y > /dev/null
      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-     - apt-get update > /dev/null
+     - apt update > /dev/null
      - node -v
      - npm cache clean -f
      - npm install -g n
      - n stable
      - n latest
      - node -v
+     - yarn self-update
      - yarn --version
      # build ui
      - cd ./slspatcherui
