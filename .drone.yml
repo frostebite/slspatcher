@@ -1,7 +1,7 @@
 pipeline:
   build:
     image: ubuntu
-    secrets:  [ gcloud_key ]
+    secrets:  [ gcloud_key, github_token ]
     commands:
      - apt install --reinstall base-files lsb-release lsb-base -y > /dev/null
      - apt-get update > /dev/null
@@ -13,6 +13,9 @@ pipeline:
      - npm install
      - cd ./slspatcherui
      - npm run-script ebuild
+     - npm install -g github-release-cli
+     - github-release upload --owner "$${DRONE_REPO_NAMESPACE}" --repo "$${DRONE_REPO_NAME}" --tag 0.0.1 --name 0.0.1 --body "This release contains bug fixes and imporvements, including:\n..." --token $${GITHUB_TOKEN} "./dist/*.zip"
+     
   build_tag_deploy: 
     image: ubuntu
     secrets:  [ gcloud_key ]
