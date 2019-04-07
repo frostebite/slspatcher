@@ -21,8 +21,8 @@ pipeline:
       - >-
         github-release upload \
         --owner frostebite \
-        --repo slspatcherui \
-        --tag "v0.1.0" \
-        --name "v0.1.0" \
+        --repo slspatcher \
+        --tag $${DRONE_TAG} \
+        --name $${DRONE_TAG} \
         --body "This release contains bug fixes and imporvements, including:\n..." \
-        archive.zip index.html app.min.css app.min.js
+        latest.yml slspatcher-setup-$${DRONE_TAG}.exe
