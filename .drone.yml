@@ -16,7 +16,6 @@ pipeline:
      - n stable
      - n latest
      - node -v
-     - yarn self-update
      - yarn --version
      # build ui
      - cd ./slspatcherui
