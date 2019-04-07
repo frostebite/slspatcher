@@ -15,14 +15,15 @@ pipeline:
      - n stable
      - n latest
      - node -v
+     - yarn --version
      # build ui
      - cd ./slspatcherui
-     - npm install > /dev/null
-     - npm run-script build
+     - yarn install > /dev/null
+     - yarn build
      # build app wrapper
      - cd ..
-     - npm install > /dev/null
-     - npm run-script dist
+     - yarn install > /dev/null
+     - yarn dist
      # release
      - npm install --global release-it
      - release-it -n
