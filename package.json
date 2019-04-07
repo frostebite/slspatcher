@@ -6,6 +6,7 @@
   "author": "Fisher",
   "build": {
     "appId": "sls.patcher",
+    "files": ["build/icon.ico"],
     "nsis": {
       "installerIcon": "icon.ico",
       "uninstallerIcon": "icon.ico",
@@ -20,6 +21,9 @@
           "repo": "slspatcher"
         }
       ]
+    },
+    "directories": {
+      "buildResources":"./"
     }
   },
   "FileSet": [
