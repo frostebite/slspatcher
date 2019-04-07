@@ -30,7 +30,7 @@ export class AppComponent implements OnInit {
   }
   title = 'app';
   status = 'Waiting...';
-  hasLoggedIn : boolean = false;
+  hasLoggedIn : boolean = true;
   version = "0.0.0";
 
   @HostListener('window:syncing-all', ['$event', "$event.detail.state"]) 
