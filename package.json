@@ -4,6 +4,7 @@
   "description": "A minimal Electron application for patching",
   "main": "main.js",
   "author": "Fisher",
+  "repository":"https://github.com/frostebite/slspatcher.git",
   "build": {
     "appId": "sls.patcher",
     "files": ["**/*", "icon.*"],
