@@ -1,22 +1,24 @@
 pipeline:
   build:
-    image: node
+    image: ubuntu
     secrets:  [ gcloud_key ]
     commands:
      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
      - echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
-     - apt-get update
-     - apt-get install yarn -y
+     - apt-get update > /dev/null
+     - apt install nodejs npm curl yarn -y > /dev/null
      - npm install --prefix ./slspatcherui
      - npm install
      - cd ./slspatcherui
      - npm run-script ebuild
   build_tag_deploy: 
-    image: node
+    image: ubuntu
     secrets:  [ gcloud_key ]
     when:
       event: tag
     commands:
+      - apt-get update > /dev/null
+      - apt install nodejs npm curl yarn -y > /dev/null
       - npm install -g github-release-cli
       - >-
         github-release upload \
