@@ -25,8 +25,8 @@ pipeline:
       - npm install -g github-release-cli
       - >-
         github-release upload \
-        --owner frostebite \
-        --repo slspatcher \
+        --owner $${DRONE_REPO_NAMESPACE} \
+        --repo $${DRONE_REPO_NAME} \
         --tag $${DRONE_TAG} \
         --name $${DRONE_TAG} \
         --body "This release contains bug fixes and imporvements, including:\n..." \
