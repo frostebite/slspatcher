@@ -6,7 +6,7 @@
   "author": "Fisher",
   "build": {
     "appId": "sls.patcher",
-    "files": ["**/*", "build/icon.*"],
+    "files": ["**/*", "icon.*"],
     "nsis": {
       "installerIcon": "icon.ico",
       "uninstallerIcon": "icon.ico",
