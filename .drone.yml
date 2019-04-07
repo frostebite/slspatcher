@@ -1,11 +1,9 @@
 pipeline:
   build:
-    image: ubuntu
+    image: electronuserland/builder:wine
     secrets:  [ gcloud_key, github_token ]
     commands:
      - apt-get update > /dev/null
-     - apt install nodejs npm curl -y > /dev/null
-     - apt install --reinstall base-files lsb-release lsb-base -y > /dev/null
      - curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
      - sh -c 'echo "deb https://dl.yarnpkg.com/debian/ stable main" >> /etc/apt/sources.list.d/yarn.list'
      - apt update > /dev/null
@@ -19,7 +17,7 @@ pipeline:
      - yarn --version
      # build ui
      - cd ./slspatcherui
-     - yarn install > /dev/null
+     - yarn install -y > /dev/null
      - yarn build
      # build app wrapper
      - cd ..
@@ -29,7 +27,7 @@ pipeline:
      - npm install --global release-it
      - release-it -n
   build_tag_deploy: 
-    image: ubuntu
+    image: electronuserland/builder:wine
     secrets:  [ gcloud_key ]
     when:
       event: tag
